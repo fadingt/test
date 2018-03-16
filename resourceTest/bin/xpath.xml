@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans >
+	<book/>
+	<bean id="beanA" class="resourceTest.BeanA" >
+		<subean name="aaa">hello world</subean>
+	</bean>
+	<bean id="beanB" class="resourceTest.BeanB" />
+	<bean name="beanA" class="resourceTest.BeanA" />
+</beans>

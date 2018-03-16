@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<书架>
+	<书>
+		<userid>100000</userid>
+		<username>admin100000</username>
+		<userpwd>123456</userpwd>
+	</书>
+	<书>
+		<userid>100001</userid>
+		<username>admin100001</username>
+		<userpwd>123456</userpwd>
+	</书>
+</书架>

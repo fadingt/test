@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+	<!-- <constant name="struts.action.extention" value="action"></constant> -->
+	<!-- <constant name="struts.objectFactory" value="spring" /> -->
+	<package name="userManage" extends="struts-default">
+		<action name="login_*" class="action.LoginAction" method="{1}">
+			<result name="OK">/WEB-INF/page/searchUser.jsp</result>
+			<result name="input">/login.jsp</result>
+			<result name="NOUSER">/login.jsp</result>
+			<result name="FAIL">/login.jsp</result>
+			<result name="LOGIN">/WEB-INF/page/index.jsp</result>
+			<allowed-methods>execute, login</allowed-methods>
+		</action>
+		<action name="upload_*" class="action.UploadAction" method="{1}">
+			<result name="OK">/WEB-INF/page/upload.jsp</result>
+			<allowed-methods>up</allowed-methods>
+		</action>
+		<action name="getuser_*" class="action.SearchUserAction" method="{1}">
+			<result name="OK">/WEB-INF/page/searchUser.jsp</result>
+			<result name="input">/WEB-INF/page/searchUser.jsp</result>
+			<allowed-methods>getuserbyid</allowed-methods>
+		</action>
+		<action name="unit_*" class="action.SearchUnitAction" method="{1}">
+			<result name="OK">searchUnit.jsp</result>
+			<result name="input">searchUnit.jsp</result>
+			<allowed-methods>searchUnit</allowed-methods>
+		</action>
+	</package>
+
+</struts>
