@@ -24,9 +24,8 @@ public class XMLReader {
 //		treeWalk(doc);
 //		3.xpath
 		Document doc = createDoc();
-		List<Node> list = doc.selectNodes("//@* ");
-//		System.out.println(list);
-		for (Iterator<Node> it = list.iterator(); it.hasNext();) {
+		List<?> list = doc.selectNodes("//@* ");
+		for (Iterator<?> it = list.iterator(); it.hasNext();) {
 			Node node = (Node) it.next();
 //			System.out.println(node.valueOf("@name"));
 //			System.out.println(node.getNodeTypeName());
@@ -41,9 +40,8 @@ public class XMLReader {
 		// ѡ���ı��ڵ�
 		// doc.selectNodes("//a/@href");
 		Element root = doc.getRootElement();
-		System.out.println();
-		for (Iterator<Element> it = root.elementIterator(); it.hasNext();) {
-			Element ele = it.next();
+		for (Iterator<?> it = root.elementIterator(); it.hasNext();) {
+			Element ele = (Element)it.next();
 			System.out.println(ele.getName());
 		}
 	}

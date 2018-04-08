@@ -30,6 +30,8 @@
   examples web application, do not forget to remove the <!.. ..> that surrounds
   them. You will also need to set the passwords to something appropriate.
 -->
+  <role rolename="manager-gui"/>
+  <user password="z13833545277" roles="manager-gui" username="liuxingyu"/>
 <!--
   <role rolename="tomcat"/>
   <role rolename="role1"/>

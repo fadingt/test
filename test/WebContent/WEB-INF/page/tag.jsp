@@ -10,6 +10,19 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta http-equiv="Expires" content="0">
+<style>
+.odd {
+	background-color: #FF88FF;
+}
+
+.even {
+	background-color: #88FF88;
+}
+
+tr:HOVER {
+	background-color: yellow;
+}
+</style>
 <title>Login</title>
 </head>
 <body>
@@ -25,13 +38,7 @@
 	<agree:forEach var="str" items="${list }">
 		${str }
 	</agree:forEach>
-	<style>
-		.odd{background-color: #FF88FF;}
-		.even{background-color: #88FF88;}
-		tr:HOVER {
-	background-color: yellow;
-}
-	</style>
+
 	<table border="1" width="40%">
 		<c:forEach var="str" items="${list }" varStatus="status">
 			<tr class="${status.count%2==0?'even':'odd'}">

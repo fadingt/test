@@ -7,13 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 
 
 public class ServletUtil {
-	public static void  showHeaders(HttpServletRequest rq) {
-		Enumeration<String> names = rq.getHeaderNames();
-		System.out.println("SHOW HEADERS BEGIN");
-		System.out.println("===================================================================");
+	public static void  showHeaders(HttpServletRequest req) {
+		Enumeration<String> names = req.getHeaderNames();
+		System.out.println("==============================HEAD=================================");
 		while (names.hasMoreElements()) {
 			String name = names.nextElement();
-			System.out.println(name + ":" + rq.getHeader(name));
+			System.out.println(name + ":" + req.getHeader(name));
 		}
 		System.out.println("===================================================================");
 	}

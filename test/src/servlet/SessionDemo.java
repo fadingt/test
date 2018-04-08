@@ -25,7 +25,7 @@ public class SessionDemo extends HttpServlet {
 		for (int i = 0; cookies != null && i < cookies.length; i++) {
 			if (cookies[i].getName().equals("lastAccessTime")) {
 				Long cookieValue = Long.parseLong(cookies[i].getValue());
-				out.print(new Date(cookieValue).toLocaleString()+"<br/>");
+				out.print(new Date(cookieValue)+"<br/>");
 			}
 		}
 		Cookie cookie = new Cookie("lastAccessTime", new Date().getTime()+"");
