@@ -4,27 +4,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<!-- https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js -->
 <script type="text/javascript"
 	src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.js"></script>
 <script type="text/javascript">
 console.log(JSON.stringify({"username" : "liuxingyu","password" : "abc"}));
-/* 	$(document).ready(function() { */
-		/* console.log({"username" : "liuxingyu","password" : "abc"}); */
+ 	$(document).ready(function() {
 		$.ajax({
 			type : "post",
 			url : "cons.do",
 			contentType : "application/JSON;charset=UTF-8",
 			data : '{"username" : "liuxingyu","password" : "abc"}',
 			success : function(data) {
-				alert(data);
 				console.log(data);
 			},
 			error : function() {
 				alert("error");
 			}
 		});
-/* 	}); */
+ 	}); 
 </script>
 <title>Insert title here</title>
 </head>

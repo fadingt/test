@@ -76,7 +76,6 @@ public class Index {
 		user.setUsername("liuxingyu");
 		user.setDeptname("haubei");
 		user.setCellphone("1234");
-//		JSON json;
 		JSONArray array = new JSONArray();
 		array.add(user);
 		return array.toString();

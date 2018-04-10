@@ -26,7 +26,7 @@
 </head>
 <body>
 	<h2>index2 page</h2>
-	<br /> ${pageContext.servletContext.contextPath} ${a}
+	<br /> ${pageContext.servletContext.contextPath}
 	<br />
 
 </body>
