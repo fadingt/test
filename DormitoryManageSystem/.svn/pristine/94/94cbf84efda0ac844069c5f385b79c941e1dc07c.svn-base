@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.IStudentInfoMessageDao">
+    <!--获取所有所要展示的信息-->
+    <select id="getAllMessage" resultType="org.vaalbara.bean.StudentInfoMessage" parameterType="int">
+          SELECT s.s_name sName,s.s_class sClass,s.d_id dId,d.bed_id bedId,s.s_email sEmail,s.s_phone sPhone,p.p_name pName
+          FROM student s,profesion p,dormitory d
+          WHERE s.s_id=d.s_id AND s.p_id=p.p_id
+                AND s.s_id=#{sId};
+    </select>
+    
+    <!--根据id获取请假次数-->
+    <select id="getVocationCount" parameterType="int" resultType="int">
+        SELECT count(DISTINCT(v.v_id))
+        FROM student s,vocation v
+        WHERE s.s_id=v.s_id
+              AND s.s_id=#{sId}
+    </select>
+    <!--根据id获取报修次数-->
+    <select id="getRepairCount" parameterType="int" resultType="int">
+        SELECT count(DISTINCT(r.r_id))
+        FROM student s,repair r
+        WHERE s.s_id=r.r_id
+              AND s.s_id=#{sId}
+    </select>
+    <!--根据id获取处分次数-->
+    <select id="getCriticizeCount" parameterType="int" resultType="int">
+        SELECT count(DISTINCT(c.c_id))
+        FROM student s,criticize c
+        WHERE s.s_id=c.s_id
+              AND s.s_id=#{sId}
+    </select>
+
+
+</mapper>

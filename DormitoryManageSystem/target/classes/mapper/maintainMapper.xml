@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.IMaintainDao">
+    <!--查询所有维修工-->
+    <select id="getMaintainAll" resultType="org.vaalbara.bean.Maintain">
+        select m_id,m_name,m_email,m_phone from maintain
+    </select>
+    <!--查询所有维修工-->
+    <select id="getMaintain" resultType="org.vaalbara.bean.Maintain">
+        select * from maintain
+    </select>
+    <!--增加维修工-->
+    <insert id="addMaintain" parameterType="org.vaalbara.bean.Maintain" useGeneratedKeys="true" keyProperty="mId">
+        insert into maintain(m_name,m_email,m_phone) values(#{mName},#{mEmail},#{mPhone})
+    </insert>
+    <!--修改维修工-->
+    <update id="updateMaintain" parameterType="org.vaalbara.bean.Maintain" useGeneratedKeys="true" keyProperty="mId">
+        update maintain set m_name=#{mName},m_email=#{mEmail},m_phone=#{mPhone} where m_id=#{mId}
+    </update>
+    <!--删除维修工-->
+    <delete id="deleteMaintain" parameterType="int">
+        delete from maintain where m_id=#{mId}
+    </delete>
+    <!--查询维修工-->
+    <select id="selectMaintain" parameterType="String" resultType="org.vaalbara.bean.Maintain">
+        select * from maintain where m_name like '%${mName}%'
+    </select>
+
+    <!--根据id查询对应维修工-->
+    <select id="getMaintainById" resultType="org.vaalbara.bean.Maintain" parameterType="int">
+        select m_id,m_name,m_email,m_phone from maintain where m_id=#{mId}
+    </select>
+
+</mapper>

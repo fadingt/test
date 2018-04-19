@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>文章添加--Vaalbara社区后台管理</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+</head>
+<body class="childrenBody">
+	<br/><br/>
+	<form class="layui-form" style="width:80%;">
+		<div class="layui-form-item">
+			<label class="layui-form-label">公告标题</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input linksName" lay-verify="required" placeholder="请输入公告标题" id="nTitle">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">公告摘要</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input linksName" lay-verify="required" placeholder="请输入公告摘要" id="nPic">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">展示位置</label>
+				<div class="layui-input-block">
+					<input type="checkbox" name="homePage" class="homePage" title="首页" checked disabled>
+					<!--<input type="checkbox" name="subPage" class="subPage" title="子页">-->
+				</div>
+			</div>
+			<!--<div class="layui-inline">-->
+				<!--<label class="layui-form-label">发布时间</label>-->
+				<!--<div class="layui-input-inline">-->
+					<!--<input type="text" class="layui-input linksTime" lay-verify="date" onclick="layui.laydate({elem:this})">-->
+				<!--</div>-->
+			<!--</div>-->
+		</div>
+		<!--<div class="layui-form-item">-->
+			<!--<label class="layui-form-label">站长邮箱</label>-->
+			<!--<div class="layui-input-block">-->
+				<!--<input type="text" class="layui-input masterEmail" lay-verify="email" placeholder="请输入网站地址">-->
+			<!--</div>-->
+		<!--</div>-->
+		<div class="layui-form-item">
+			<label class="layui-form-label">公告内容</label>
+			<div class="layui-input-block">
+				<textarea placeholder="请输入公告内容" class="layui-textarea linksDesc" rows="10" id="nContent"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit="" lay-filter="addLinks">立即提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		    </div>
+		</div>
+	</form>
+	<script type="text/javascript" src="../../layui/layui.js"></script>
+	<script type="text/javascript" src="linksEdit.js"></script>
+	<script type="text/javascript" src="../../../js/jquery-1.11.3.min.js"></script>
+</body>
+<!--<script>-->
+    <!--layui.config({-->
+        <!--base : "js/"-->
+    <!--}).use(['form','layer','jquery','layedit','laydate'],function(){-->
+        <!--var form = layui.form(),-->
+            <!--layer = parent.layer === undefined ? layui.layer : parent.layer,-->
+            <!--laypage = layui.laypage,-->
+            <!--layedit = layui.layedit,-->
+            <!--laydate = layui.laydate,-->
+            <!--$ = layui.jquery;-->
+
+        <!--//创建一个编辑器-->
+        <!--var editIndex = layedit.build('links_content');-->
+        <!--var addLinksArray = [],addLinks;-->
+        <!--form.on("submit(addLinks)",function(data) {-->
+
+
+            <!--var nTitle = $("#nTitle").val();-->
+            <!--var nPic = $("#nPic").val();-->
+            <!--var nContent = $("#nContent").val();-->
+
+            <!--alert(editIndex);-->
+            <!--alert("222222222222222");-->
+
+            <!--alert(nPic);-->
+            <!--alert(nContent);-->
+            <!--alert("aaaaaaaaaaa");-->
+
+            <!--$.ajax({-->
+                <!--type: "POST",-->
+                <!--url: "../../../notice/add",-->
+                <!--//async:false,-->
+                <!--data: {-->
+                    <!--// nTitle:"nTitle",-->
+                    <!--// nContent:"nContent"-->
+                <!--},-->
+                <!--dataType: "json",-->
+                <!--success: function (result) {-->
+                    <!--alert("添加成功...！");-->
+
+                    <!--setTimeout(function () {-->
+                        <!--location.href = "newsList.html";-->
+                    <!--}, 800);-->
+                <!--}-->
+            <!--});-->
+
+            <!--alert("33333333333333333333");-->
+            <!--location.href = "./newsList.html";-->
+        <!--})-->
+<!--</script>-->
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.Idromitory">
+    <!--查询所有宿舍-->
+    <select id="getDromitoryAll" resultType="org.vaalbara.bean.Dromitory">
+        select d_id,count(s_id) sIdCount,count(bed_id) bedIdCount,count(bed_id)-count(s_id) nullBed from dormitory group by d_id
+    </select>
+
+    <!--查询所有宿舍-->
+    <select id="getDromitoryById" resultType="org.vaalbara.bean.Dromitory" parameterType="int">
+        select d_id,count(s_id) sIdCount,count(bed_id) bedIdCount,count(bed_id)-count(s_id) nullBed from dormitory where d_id like '%${dId}%' group by d_id
+    </select>
+
+    <!--获取宿舍全部信息-->
+    <select id="getStuInfo" resultType="org.vaalbara.bean.DroStudent" parameterType="org.vaalbara.bean.DroStudent">
+        select s_id,bed_id from dormitory where d_id=#{dId}
+    </select>
+
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.IMaintainDao">
+    <!--查询所有维修工-->
+    <select id="getMaintainAll" resultType="org.vaalbara.bean.Maintain">
+        select m_id,m_name,m_email,m_phone from maintain
+    </select>
+
+    <!--根据id查询对应维修工-->
+    <select id="getMaintainById" resultType="org.vaalbara.bean.Maintain" parameterType="int">
+        select m_id,m_name,m_email,m_phone from maintain where m_id=#{mId}
+    </select>
+</mapper>

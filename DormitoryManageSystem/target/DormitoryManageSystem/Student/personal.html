@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>智慧园--个人中心</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="renderer" content="webkit">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+	<link rel="stylesheet" href="css/demo.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/fen.css" />
+	<link href="css/EvaluationOrder.debug.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="js/jquery-2.2.0.min.js"></script>
+</head>
+
+<body>
+<div class="header">
+	<div class="hea_nav">
+		<a href="index.html"><img src="img/img.png" class="logo"/></a>
+		<ul>
+			<a href="index.html"><li>首页</li></a>
+			<a href="../need/html/jie/add.html"><li>学生服务</li></a>
+			<a href="blog.html"><li>BLOG</li></a>
+			<a href="personal.html"><li>个人中心</li></a>
+			<a href="message.html"><li>留言板</li></a>
+		</ul>
+	</div>
+	<div class="hea_right">
+		<p>
+			<a href="personal.html" id="headName"></a>|<a id="layout" href="../login/index.html">退出</a>
+		</p>
+	</div>
+</div>
+<div class="header2">
+	<img src="img/phone_meau.png" class="meau"/>
+	<a href="index.html"><img src="img/img.png" class="logo"/></a>
+	<a href="shop_car.html"><i class="iconfont">&#xe600;</i><span>1</span></a>
+	<ul class="meau_box">
+		<a href="index.html"><li>首页</li></a>
+		<a href="../need/html/jie/add.html"><li>学生服务</li></a>
+		<a href="blog.html"><li>BLOG</li></a>
+		<a href="personal.html"><li>个人中心</li></a>
+		<a href="message.html"><li>留言板</li></a>
+		<a href="../login/index.html"><p style="border-right:1px #fff solid;" class="login_btn">登录</p></a>
+		<a href="../login/reg.html"><p>注册</p></a>
+	</ul>
+</div>
+<script>
+    $(function(){
+
+        $(".meau").on("click", function(e) {
+            $(".meau_box").slideToggle();
+            $(document).one("click", function() {
+                $(".meau_box").slideUp();
+            });
+            e.stopPropagation();
+        });
+        $(".meau").on("click", function(e) {
+            e.stopPropagation();
+        });
+    });
+</script>
+<div class="personal">
+	<p class="title">我的账户<span id="headName2"></span></p>
+	<ul class="per_nav">
+		<li class="active">基本信息</li>
+		<li>我的订单</li>
+		<li>我的留言</li>
+		<li>密码修改</li>
+	</ul>
+	<ul class="per_nav2">
+		<li class="active">订单</li>
+		<li>信息</li>
+		<li>优惠卷</li>
+		<li>留言</li>
+	</ul>
+	<div class="per_box per_info" id="myInformation">
+
+	</div>
+	<script>
+        $(function () {
+            $.ajax({
+                url: '../students/getStudentByHttpSession',
+                type: 'get',
+                dataType: 'json',
+                async: false,
+                data: {},
+                success:function(data){
+                    var str ='<form action="" method="post">';
+                    str=str+'<p>';
+                    str=str+'<span class="tl"><font color="#D70000" style="margin-right: 5px;">*</font>姓名</span>';
+                    str=str+'<input type="text"  id="sName" name="sName" value="'+(typeof(data.sName)!="undefined"?data.sName:"")+'"/>';
+                    str=str+'</p>';
+                    str=str+'<p>';
+                    str=str+'<span>邮箱地址</span>';
+                    str=str+'<input type="text" value="'+data.sEmail+'" id="sEmail" name="sEmail" disabled/>';
+                    str=str+'</p>';
+                    str=str+'<p>';
+                    str=str+'<span class="tl"><font color="#D70000" style="margin-right: 5px;">*</font>电话号</span>';
+                    str=str+' <input type="text"  id="sPhone" name="sPhone"value="'+(typeof(data.sPhone)!="undefined"?data.sPhone:"")+'"/>';
+                    str=str+'</p>';
+
+
+                    str=str+' <p>';
+                    str=str+'<span class="tl"><font color="#D70000" style="margin-right: 5px;">*</font>专业</span>';
+                    str=str+'<select id="pId" name="pId" >';
+                    str=str+' <option value="1">信息管理与信息系统</option>';
+                    str=str+' <option value="2">软件工程</option>';
+                    str=str+' <option value="3">信息技术</option>';
+                    str=str+' <option value="4">生物工程</option>';
+                    str=str+' <option value="5">计算机技术</option>';
+                    str=str+'</select>';
+                    str=str+'</p>';
+
+
+                    str=str+' <p>';
+                    str=str+'<span class="tl"><font color="#D70000" style="margin-right: 5px;">*</font>年级</span>';
+                    str=str+'<select id="sClass" name="sClass" >';
+                    str=str+' <option value="大一">大一</option>';
+                    str=str+' <option value="大二">大二</option>';
+                    str=str+' <option value="大三">大三</option>';
+                    str=str+' <option value="大四">大四</option>';
+                    str=str+' <option value="大五">大五</option>';
+                    str=str+'</select>';
+                    str=str+'</p>';
+                    str=str+'<p class="per_info_btn" id="information">保存</p>';
+                    str=str+'</form>';
+                    $("#myInformation").html(str);
+                    $("#headName").html("你好,"+(typeof(data.sName)!="undefined"?data.sName+"同学":"匿名用户"));
+                    $("#headName2").html("您好,"+(typeof(data.sName)!="undefined"?data.sName+"同学":"匿名用户"));
+
+                    $("#sClass option[value = "+data.sClass+"]").attr("selected",true);
+                    $("#pId option[value = "+data.pId+"]").attr("selected",true);
+                    $('#information').click(function () {
+                        var sName =  $.trim($('#sName').val());
+                        var sEmail = $.trim($('#sEmail').val());
+                        var sPhone = $.trim($('#sPhone').val());
+                        var pId = $.trim($('#pId').val());
+                        var sClass = $.trim($('#sClass').val());
+                        $.ajax({
+                            url: '../students/updateStudent',
+                            type: 'get',
+                            dataType: 'json',
+                            async: false,
+                            data: {
+                                sName:sName,
+                                sEmail:sEmail,
+                                sPhone:sPhone,
+                                pId:pId,
+                                sClass:sClass},
+                            success:function(data){
+                                alert("修改个人信息成功");
+                                $(window).attr('location','index.html');
+                            }
+                        });
+                    });
+                }
+            });
+        });
+        $('#layout').click(function () {
+            $.ajax({
+                url: '../students/StudentLogout',
+                type: 'get',
+                dataType: 'json',
+                async: false,
+                data: {
+                   },
+                success:function(data){
+                    $(window).attr('location','../login/index.html');
+                }
+            });
+        });
+	</script>
+
+	<div class="per_box " style="display: none;">
+		<div class="order-list" id="repair">
+			暂无订单信息
+		</div>
+	</div>
+	<script>
+        var reqnum = 0;
+        $(function () {
+            $.ajax({
+                url: '../students/getStudentRepair',
+                type: 'get',
+                dataType: 'json',
+                async: false,
+                data: {},
+                success:function(result){
+                    var str = '';
+                    if(result.length == 0){
+                        str = '暂无订单信息';
+                    }
+                    for(var i = 0;i<result.length;i++){
+                        str = str+'<section class="sec" id="section'+result[i].rId+'">';
+                        str = str+'<div class="order-list-top">';
+                        str = str+'<p class="order-list-top-img">';
+                        str = str+'<img src="img/weixiu.jpg" />';
+                        str = str+'</p>';
+                        str = str+'<div class="order-list-top-info">';
+                        str = str+' <h1>'+result[i].rReason+'</h1>';
+                        str = str+'<h2>'+result[i].mName+'</h2>';
+                        str = str+'</div>';
+                        str = str+'</div>';
+                        str = str+'<div class="order-list-Below">';
+                        str = str+'<h1>商品评价</h1>';
+                        str = str+'<ul>';
+                        str = str+'<li></li>';
+                        str = str+'<li></li>';
+                        str = str+'<li></li>';
+                        str = str+'<li></li>';
+                        str = str+'<li></li>';
+                        str = str+'</ul>';
+                        str = str+'</div>';
+                        str = str+'<div class="order-button">';
+                        str = str+'<a href="javascript:void(0);" onclick="regnum('+result[i].rId+')">发表评论</a>';
+                        str = str+'</div>';
+                        str = str+'</section>';
+                    }
+                    $('#repair').html(str);
+
+                    $(".order-list-Below ul li").click(function(){
+                        var num = $(this).index()+1;
+                        var len = $(this).index();
+                        reqnum = num;
+                        var thats = $(this).parent(".order-list-Below ul").find("li");
+                        if($(thats).eq(len).attr("class")=="on"){
+                            if($(thats).eq(num).attr("class")=="on"){
+                                $(thats).removeClass();
+                                for (var i=0 ; i<num; i++) {
+                                    $(thats).eq(i).addClass("on");
+                                }
+                            }else{
+                                $(thats).removeClass();
+                                for (var k=0 ; k<len; k++) {
+                                    $(thats).eq(k).addClass("on");
+                                }
+                            }
+                        }else{
+                            $(thats).removeClass();
+                            for (var j=0 ; j<num; j++) {
+                                $(thats).eq(j).addClass("on");
+                            }
+                        }
+                    });
+                }
+
+            });
+        });
+        var regnum = function(rId) {
+            $.ajax({
+                url: '../students/updateStudentRepair',
+                type: 'get',
+                dataType: 'json',
+                async: false,
+                data: {
+                    rId:rId,
+                    grade:reqnum
+                },
+                success:function(result){
+                    alert("评价完成");
+                    $("#section"+rId).remove();
+                }
+            });
+        }
+	</script>
+
+
+
+
+
+	<div class="per_box" style="display: none;">
+		我的留言
+	</div>
+	<div class="per_box per_info" style="display: none;">
+		<form action="" method="post">
+			<p>
+				<span>旧密码</span>
+				<input type="password" id="oldPass"/>
+			</p>
+			<p>
+				<span>新密码</span>
+				<input type="password" id="newPass"/>
+			</p>
+			<p>
+				<span>确认新密码</span>
+				<input type="password" id="newPass2"/>
+			</p>
+			<p class="per_info_btn" id="updateStuPass">保存</p>
+		</form>
+	</div>
+</div>
+<script>
+    $(function(){
+        $('#updateStuPass').click(function() {
+            var oldPass = $.trim($('#oldPass').val());
+            var newPass = $.trim($('#newPass').val());
+            var newPass2 = $.trim($('#newPass2').val());
+            if(oldPass == null || oldPass == "" || newPass == null || newPass == "" || newPass2 == null || newPass2 == ""){
+                alert("密码框不能输入为空");
+            }else if(newPass2 != newPass){
+                alert("两次输入不一致");
+            }else {
+                $.ajax({
+                    url: '../students/updateStuPass',
+                    type: 'get',
+                    dataType: 'json',
+                    async: false,
+                    data: {
+                        oldPass:oldPass,
+                        newPass:newPass
+                    },
+                    success:function(result){
+                        if(result.toString() == "1"){
+                            alert("密码更改成功,请重新登录");
+                            $(window).attr('location','../login/index.html');
+                        }else if(result.toString() == "2"){
+                            alert("密码输入不正确");
+                        }else if(result.toString() == "0"){
+                            alert("新旧密码相同,未作出改变");
+                        }else{
+                            alert("出现未知错误");
+                        }
+                    }
+                });
+            }
+
+        });
+    });
+</script>
+<script>
+    $(function(){
+        $(".per_couponul li").click(function(){
+            $(".per_couponul li").removeClass("active");
+            $(this).addClass("active");
+            $(".per_coupon_box").hide();
+            $(".per_coupon_box").eq($(".per_couponul li").index(this)).fadeIn();
+        });
+        $(".per_nav li").click(function(){
+            $(".per_nav li").removeClass("active");
+            $(this).addClass("active");
+            $(".per_box").hide();
+            $(".per_box").eq($(".per_nav li").index(this)).fadeIn();
+        });
+        $(".per_nav2 li").click(function(){
+            $(".per_nav2 li").removeClass("active");
+            $(this).addClass("active");
+            $(".per_box").hide();
+            $(".per_box").eq($(".per_nav2 li").index(this)).fadeIn();
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function(){
+        $(".close").click(function(){
+            $(".login_bg").fadeOut();
+        });
+        $(".login_btn").click(function(){
+            $(".login_bg").slideDown();
+            $(".meau_box").slideUp();
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function(){
+        $(".res_nav").children("li").click(function(){
+            $(".res_nav").children("li").stop().removeClass("active");
+            $(this).stop().addClass("active");
+            $(".res_form").stop().slideUp();
+            $(".res_form").eq($(".res_nav").children("li").index(this)).stop().slideDown();
+        });
+    });
+</script>
+<div class="footer">
+	<div class="footer_con2">
+		<p>© 2015 dingdongyouli.com All rights reserved.</p>
+	</div>
+</div>
+</body>
+
+</html>

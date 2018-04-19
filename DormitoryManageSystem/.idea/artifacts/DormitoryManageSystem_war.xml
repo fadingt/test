@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="DormitoryManageSystem:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="DormitoryManageSystem.war">
+      <element id="artifact" artifact-name="DormitoryManageSystem:war exploded" />
+    </root>
+  </artifact>
+</component>

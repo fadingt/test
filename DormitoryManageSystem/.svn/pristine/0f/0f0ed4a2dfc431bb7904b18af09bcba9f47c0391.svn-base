@@ -1,0 +1,37 @@
+package org.vaalbara.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.vaalbara.bean.Maintain;
+import org.vaalbara.service.IMaintainService;
+import org.vaalbara.service.IdromitoryService;
+
+import java.util.List;
+
+/**
+ * Created by Administrator on 2018/3/15.
+ */
+@Controller
+@RequestMapping(value = "maintain")
+public class MaintainController {
+    //声明maintain
+    @Autowired //默认根据类型自动装配的
+    IMaintainService iMaintainService;
+
+    /**
+     * 查询所有维修工
+     * @return
+     */
+    @RequestMapping(value = "minfo",method = RequestMethod.POST)
+    @ResponseBody
+    public List<Maintain> getMaintainAll(){
+        System.out.println("minfo进来了");
+        List list=iMaintainService.getMaintainAll();
+        System.out.println(list);
+        System.out.println("minfo出去了");
+        return list;
+    };
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>首页--Vaalbara社区后台管理</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="//at.alicdn.com/t/font_tnyc012u2rlwstt9.css" media="all" />
+	<link rel="stylesheet" href="../css/main.css" media="all" />
+</head>
+<body class="childrenBody">
+	<div class="panel_box row">
+		<div class="panel col">
+			<a href="javascript:;" data-url="page/message/message.html">
+				<div class="panel_icon">
+					<i class="layui-icon" data-icon="&#xe63a;">&#xe63a;</i>
+				</div>
+				<div class="panel_word newMessage">
+					<span id="news"></span>
+					<cite>新消息</cite>
+				</div>
+			</a>
+		</div>
+		<div class="panel col">
+			<a href="javascript:;" data-url="page/user/newUsers.html">
+				<div class="panel_icon" style="background-color:#FF5722;">
+					<i class="iconfont icon-dongtaifensishu" data-icon="icon-dongtaifensishu"></i>
+				</div>
+				<div class="panel_word userAll">
+					<span id="newReg"></span>
+					<cite>新增人数</cite>
+				</div>
+			</a>
+		</div>
+		<div class="panel col">
+			<a href="javascript:;" data-url="page/user/allUsers.html">
+				<div class="panel_icon" style="background-color:#009688;">
+					<i class="layui-icon" data-icon="&#xe613;">&#xe613;</i>
+				</div>
+				<div class="panel_word userAll">
+					<span id="totalCount"></span>
+					<cite >用户总数</cite>
+				</div>
+			</a>
+		</div>
+		<div class="panel col">
+			<a href="javascript:;" data-url="page/img/images.html">
+				<div class="panel_icon" style="background-color:#5FB878;">
+					<i class="layui-icon" data-icon="&#xe64a;">&#xe64a;</i>
+				</div>
+				<div class="panel_word imgAll">
+					<span id="goodCount"></span>
+					<cite >用户头像</cite>
+				</div>
+			</a>
+		</div>
+		<div class="panel col">
+			<a href="javascript:;" data-url="page/news/NoshowList.html">
+				<div class="panel_icon" style="background-color:#F7B824;">
+					<i class="iconfont icon-wenben" data-icon="icon-wenben"></i>
+				</div>
+				<div class="panel_word waitNews">
+					<span id="noAllow"></span>
+					<cite >待审核文章</cite>
+				</div>
+			</a>
+		</div>
+		<div class="panel col max_panel">
+			<a href="javascript:;" data-url="page/news/newsList.html">
+				<div class="panel_icon" style="background-color:#2F4056;">
+					<i class="iconfont icon-text" data-icon="icon-text"></i>
+				</div>
+				<div class="panel_word allNews">
+					<span id="totalCard"></span>
+					<em>文章总数</em>
+					<cite>文章列表</cite>
+				</div>
+			</a>
+		</div>
+	</div>
+ 		<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="first" style="width: 600px;height:400px;"></div>
+    <div id="second" style="width: 600px;height:400px;"></div>
+	
+		
+	 <script src="../../../js/jquery-3.2.1.js"></script>
+	<script type="text/javascript" src="../layui/layui.js"></script>
+	<script type="text/javascript" src="../js/main.js"></script>
+	<script type="text/javascript" src="../js/echarts.js"></script>
+	<script type="text/javascript" src="../js/echarts.min.js"></script>
+	
+		<script>
+	$(document).ready(function() {
+		$.ajax({
+			url : "../../../AdminMain",
+			type : "post",
+			data : {},
+			dataType:"json",
+			success:function(result) {
+				$("#news").text(result[0].newContent);//新消息
+				$("#newReg").text(result[0].newCount); //新增用户数量
+				$("#totalCount").text(result[0].renCount);     //总人数
+				$("#goodCount").text(result[0].goodCount);     //精帖数量
+				$("#noAllow").text(result[0].noShowCount);     //待审核文章
+				$("#totalCard").text(result[0].cardCount);     //文章总数
+
+			}
+		});
+
+
+	   // 基于准备好的dom，初始化echarts实例
+       var myChart = echarts.init(document.getElementById('first'));
+       // 指定图表的配置项和数据
+       myChart.setOption({
+           title: {
+               text: '新用户 近五天注册情况'
+           },
+           tooltip: {},
+           legend: {
+               data:['注册人数']
+           },
+           xAxis: {
+               data: []
+           },
+           yAxis: {},
+           series: [{
+               name: '注册人数',
+               type: 'bar',
+               data: []
+           }]
+
+    });
+ 
+          myChart.showLoading();//加载动画
+            $.post("../../../sysman").done(function(result){
+            	
+                 var str=eval('('+result+')');
+    			   var dateArr=new Array();
+    			   var countArr=new Array();
+    			   for(var i=0;i<str.length;i++){
+    				   dateArr[i]=str[i].data;
+    				   countArr[i]=str[i].countMan;
+    			   } 
+    			
+		   myChart.hideLoading();
+       	   myChart.setOption({
+       		   xAxis:{
+       			   data:dateArr
+       		   },
+       		   series:[{
+       			   name:'注册人数',
+       			   data:countArr
+       	             }]
+       	   });
+          }); 
+	   // 基于准备好的dom，初始化echarts实例
+       var sendChart = echarts.init(document.getElementById('second'));
+       // 指定图表的配置项和数据
+       sendChart.setOption({
+           title: {
+               text: '回复量最大的五个帖子'
+           },
+           tooltip: {},
+           legend: {
+               data:['回帖量']
+           },
+           xAxis: {
+               data: []
+           },
+           yAxis: {},
+           series: [{
+               name: '回帖量',
+               type: 'bar',
+               data: []
+           }]
+
+    });
+       sendChart.showLoading();//加载动画
+       $(function(){
+    	   $.ajax({
+    		   url:"../../../sysman",
+    		   type:"post",
+    		   async:false,
+    		   data:{},
+    		   dataType:"json",
+    		   success:function(result){
+    			   var dateArr=new Array();
+    			   var countArr=new Array();
+    			   for(var i=0;i<result.length;i++){
+    				   dateArr[i]=result[i].data;
+    				   countArr[i]=result[i].countMan;
+    			   }
+    			   sendChart.hideLoading();
+    	       	   sendChart.setOption({
+    	       		   xAxis:{
+    	       			   data:dateArr
+    	       		   },
+    	       		   series:[{
+    	       			   name:'注册人数',
+    	       			   data:countArr
+    	       		   }]
+    	       	   });
+    	   		}	
+    	   });
+       });  
+
+          
+          sendChart.showLoading();//加载动画
+            $.post("../../../countrevert").done(function(result){
+                 var str=eval('('+result+')');
+    			   var dateArr=new Array();
+    			   var countArr=new Array();
+    			   for(var i=0;i<str.length;i++){
+    				   dateArr[i]=str[i].cardId;
+    				   countArr[i]=str[i].countRevert;
+    			   } 
+		   sendChart.hideLoading();
+       	   sendChart.setOption({
+       		   xAxis:{
+       			   data:dateArr
+       		   },
+       		   series:[{
+       			   name:'回帖量',
+       			   data:countArr
+       	             }]
+       	   });
+          }); 
+	})
+    </script>
+</body>
+</html>

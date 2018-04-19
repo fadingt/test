@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>登录--Vaalbara社区后台管理</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/login.css" media="all" />
+</head>
+<body>
+	<video class="video-player" preload="auto" autoplay="autoplay" loop="loop" data-height="1080" data-width="1920" height="100%" width="100%">
+	    <source src="login.mp4" type="video/mp4">
+	    
+	</video>
+	<div class="video_mask"></div>
+	<div class="login">
+	    <h1>Vaalbara-管理登录</h1>
+	    <form class="layui-form">
+	    	<div class="layui-form-item">
+				<input id="adminName" class="layui-input" name="username" placeholder="用户名" lay-verify="required" type="text" autocomplete="off">
+		    </div>
+		    <div class="layui-form-item">
+				<input id="adminPass" class="layui-input" name="password" placeholder="密码" lay-verify="required" type="password" autocomplete="off">
+		    </div>
+		    <div class="layui-form-item form_code">
+				<input class="layui-input" name="code" placeholder="验证码" id="verifycode" lay-verify="required" type="text" autocomplete="off" onblur="checkCode()">
+				<div id="code" class="code"><img  src="../../../../verifyCode" width="116" height="36" id="codeImg" onclick="changeCode()"></div>
+		    </div>
+			<button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
+		</form>
+	</div>
+	<script src="../../../../js/jquery-3.2.1.js"></script>
+	<script type="text/javascript" src="../../layui/layui.js"></script>
+	<script type="text/javascript" src="login.js"></script>
+	<script>
+	function checkCode() {
+		//用户输入的验证码
+		var  code=$("#verifycode").val();
+		 $.ajax({
+			 url:"../../../../checkCode",
+			 type:"post",
+			 data:{
+				checkCode:code
+			 }, 
+			 success:function(result){
+				 if(result=="no"){
+					alert("输入验证码错误");
+					$("#verifycode").val("");
+				 }
+				 
+			 }
+		 })
+		
+	}
+
+	 function changeCode() {
+		 var date=new Date();
+		$("#codeImg").attr("src","../../../../verifyCode?time="+date.toString());
+	}
+	
+	</script>
+	
+	
+</body>
+</html>

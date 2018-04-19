@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.IVocationDao">
+    <!--查询所有学生-->
+    <insert id="addVocation" parameterType="org.vaalbara.bean.Vocation">
+        insert into vocation(s_id,v_reason,v_begin,v_end,d_id) values(#{sId},#{vReason},#{vBegin},#{vEnd},#{dId})
+    </insert>
+    <!--查询所有请假记录-->
+    <select id="getAllVocation" resultType="org.vaalbara.bean.dao.VocationDao">
+     select v_id newsId, v_reason newsName,s_id newsAuthor,v_status newsStatus,d_id newsLook,v_begin newsTime1,v_end newsTime2 from vocation
+     where v_status='待审核'
+    </select>
+    <select id="getVocationById" resultMap="stuEmail" parameterType="org.vaalbara.bean.dao.VocationDao">
+     select v.v_begin,v.v_end,s.s_email,s.s_name from vocation v ,student s
+      where v.s_id=s.s_id and v.s_id=#{newsAuthor}
+    </select>
+    <resultMap id="stuEmail" type="org.vaalbara.bean.Student">
+
+        <result property="sName" column="s_name" ></result>
+        <result property="sEmail" column="s_email"></result>
+        <association property="vocation" javaType="org.vaalbara.bean.Vocation">
+            <result property="vBegin" column="v_begin"></result>
+            <result property="vEnd" column="v_end"></result>
+        </association>
+</resultMap>
+    <update id="checkVocation" parameterType="org.vaalbara.bean.dao.VocationDao">
+        update vocation set v_status='审核通过' where v_id=#{newsId}
+    </update>
+    <update id="deleteVocation" parameterType="org.vaalbara.bean.dao.VocationDao">
+        update vocation set v_status='审核不通过' where v_id=#{newsId}
+    </update>
+</mapper>

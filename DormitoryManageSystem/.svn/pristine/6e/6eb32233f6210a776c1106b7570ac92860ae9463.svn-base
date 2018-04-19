@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/amazeui.min.css">
+		<link rel="stylesheet" href="css/admin.css">
+		<link rel="stylesheet" href="css/app.css">
+	</head>
+
+	<body>
+		<div class="am-cf admin-main">
+			<!-- content start -->
+			<div class="admin-content">
+				<div class="admin-content-body">
+					<div class="am-cf am-padding am-padding-bottom-0">
+						<div class="am-fl am-cf">
+							<strong class="am-text-primary am-text-lg"> </strong><small>
+								<i class="icon-home"></i> &gt; 首页 &gt; 维修管理</small>
+						</div>
+					</div>
+					<hr>
+					<div class="container">
+						<div class="am-g">
+							<div class="am-u-sm-12 am-u-md-6">
+								<div class="am-btn-toolbar">
+									<div class="am-btn-group am-btn-group-xs">
+										<button type="button" class="am-btn am-btn-default btnAdd">
+											<span class="icon-plus"></span> 新增
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="am-u-sm-12 am-u-md-3">
+								<div class="am-input-group am-input-group-sm">
+									<input class="am-form-field" id="departName" placeholder="请输入维修工姓名" type="text">
+									<span class="am-input-group-btn">
+										<button class="am-btn am-btn-default" type="button" id="btnsearch" onclick="sousuo()">
+											搜索
+										</button> </span>
+								</div>
+							</div>
+						</div>
+
+						<div class="am-g" style="margin-top: -30px;">
+							<div class="am-u-sm-12">
+								<form class="am-form">
+									<table class="am-table am-table-striped am-table-hover table-main">
+										<thead>
+											<tr>
+												<!--<th class="table-check">
+													&lt;!&ndash;<input id="chkAll" type="checkbox">&ndash;&gt;
+												</th>-->
+												<th class="table-id">
+													ID
+												</th>
+												<th class="table-title">
+													维修工姓名
+												</th>
+												<th class="table-title">
+													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮箱
+												</th>
+												<th class="table-title">
+													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;电话
+												</th>
+												<th class="table-set">
+													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作
+												</th>
+											</tr>
+										</thead>
+										<tbody id="tUser">
+											<!--<tr>
+												<td><input name="chks" value="27" type="checkbox"></td>
+												<td>27</td>
+												<td>研发部</td>
+												<td>1763983247@qq.com</td>
+												<td>15143222482</td>
+												<td>
+													<div class="am-btn-toolbar">
+														<div class="am-btn-group am-btn-group-xs"><button type="button" id="depart_27" class="am-btn am-btn-default am-btn-xs am-text-secondary btnedit"><span class="am-icon-pencil-square-o"></span> 编辑</button><button type="button" class="am-btn am-btn-default am-btn-xs am-text-danger amt-hide-sm-only" onclick="deleteDepart(27,1)"><span class="am-icon-trash-o"></span> 删除</button></div>
+													</div>
+												</td>
+											</tr>-->
+										</tbody>
+									</table>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- content end -->
+			</div>
+		</div>
+
+		<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="js/jquery-1.11.3.min.js"></script>
+		<!--<![endif]-->
+		<script type="text/javascript" src="myplugs/js/plugs.js"></script>
+
+		<script>
+			var a;
+			var b;
+			var c;
+			var d;
+			window.onload=function(){
+                    $.ajax({
+                        url:"./maintain/maintains",
+                        type:"get",
+                        data:{},
+                        contentType:"application/json",
+                        dataType:"json",
+                        async:false,
+                        success:function (result) {
+                            if(result.length>0){
+                                var llStr="";
+                                for(var i=0;i<result.length;i++){
+                                    var ulStr="<tr id='trid'>";
+                                    ulStr=ulStr+"<td>"+result[i].mId+"</td>";
+                                    ulStr=ulStr+"<td>";
+                                    ulStr=ulStr+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+result[i].mName;
+                                    ulStr=ulStr+"</td>";
+                                    ulStr=ulStr+"<td>"+result[i].mEmail+"</td>";
+                                    ulStr=ulStr+"<td>"+result[i].mPhone+"</td>";
+                                    ulStr=ulStr+"<td>";
+                                    ulStr=ulStr+"<div class='am-btn-toolbar'>";
+                                    ulStr=ulStr+"<div class='am-btn-group am-btn-group-xs'><button type='button' id='depart_27' class='am-btn am-btn-default am-btn-xs am-text-secondary btnedits' onclick='aaa("+result[i].mId+",&quot;"+result[i].mName+"&quot;,&quot;"+result[i].mEmail+"&quot;,&quot;"+result[i].mPhone+"&quot;)'>";
+                                    ulStr=ulStr+"<span class='am-icon-pencil-square-o'></span>编辑</button><button type='button' class='am-btn am-btn-default am-btn-xs am-text-danger amt-hide-sm-only' onclick='shan("+result[i].mId+")'><span class='am-icon-trash-o'></span> 删除</button>";
+                                    ulStr=ulStr+"</div>";
+                                    ulStr=ulStr+"</div>";
+                                    ulStr=ulStr+"</td>";
+                                    ulStr=ulStr+"</tr>";
+                                    llStr+=ulStr;
+                                    ulStr="";
+                                };
+                                $("#tUser").append(llStr);
+                            }
+
+                        }
+                    });
+				};
+           $(".btnAdd").click(function() {
+                $.jq_Panel({
+                    title: "添加维修工",
+                    iframeWidth: 500,
+                    iframeHeight: 300,
+                    url: "addDepart.html"
+                });
+            });
+           function aaa(a,b,c,d) {
+               $.jq_Panel({
+                   title: "修改维修工",
+                   iframeWidth: 500,
+                   iframeHeight: 300,
+                   url: "editDepart.html?mId="+a+"&mName="+b+"&mEmail="+c+"&mPhone="+d+"",
+               });
+               /*window.location.assign(encodeURI("UTF-8"))*/
+           }
+            function shan(a) {
+               var mId = a;
+                $.ajax({
+                    url:"../../maintain/shana",
+                    type:"post",
+                    data:{
+                        mId:mId,
+                    },
+                    dataType:"json",
+                    async:false,
+                    success:function (result) {
+                        if(result>0){
+                            alert("删除成功");
+                        }else{
+                            alert("删除失败");
+                        }
+                    }
+                });
+            }
+            function sousuo() {
+                var mName = $("#departName").val();
+                if(mName!=null && mName!=''){
+                    $.ajax({
+                        url:"../../../maintain/cha",
+                        type:"post",
+                        data:{
+                            mName:mName,
+                        },
+                        dataType:"json",
+                        async:false,
+                        success:function (result) {
+                            $("#departName").val("");
+
+
+                            $("#tUser").empty();
+                            if(result.length>0){
+                                var llStr="";
+                                for(var i=0;i<result.length;i++){
+                                    var ulStr="<tr id='trid'>";
+                                    ulStr=ulStr+"<td>"+result[i].mId+"</td>";
+                                    ulStr=ulStr+"<td>";
+                                    ulStr=ulStr+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+result[i].mName;
+                                    ulStr=ulStr+"</td>";
+                                    ulStr=ulStr+"<td>"+result[i].mEmail+"</td>";
+                                    ulStr=ulStr+"<td>"+result[i].mPhone+"</td>";
+                                    ulStr=ulStr+"<td>";
+                                    ulStr=ulStr+"<div class='am-btn-toolbar'>";
+                                    ulStr=ulStr+"<div class='am-btn-group am-btn-group-xs'><button type='button' id='depart_27' class='am-btn am-btn-default am-btn-xs am-text-secondary btnedits' onclick='aaa("+result[i].mId+",&quot;"+result[i].mName+"&quot;,&quot;"+result[i].mEmail+"&quot;,&quot;"+result[i].mPhone+"&quot;)'>";
+                                    ulStr=ulStr+"<span class='am-icon-pencil-square-o'></span>编辑</button><button type='button' class='am-btn am-btn-default am-btn-xs am-text-danger amt-hide-sm-only' onclick='shan("+result[i].mId+")'><span class='am-icon-trash-o'></span> 删除</button>";
+                                    ulStr=ulStr+"</div>";
+                                    ulStr=ulStr+"</div>";
+                                    ulStr=ulStr+"</td>";
+                                    ulStr=ulStr+"</tr>";
+                                    llStr+=ulStr;
+                                    ulStr="";
+                                };
+                                $("#tUser").append(llStr);
+                            }
+                        }
+                    });
+				}
+               /* $.ajax({
+                    url:"../../maintain/shana",
+                    type:"post",
+                    data:{
+                        mId:mId,
+                    },
+                    dataType:"json",
+                    async:false,
+                    success:function (result) {
+                        if(result>0){
+                            alert("删除成功");
+                        }else{
+                            alert("删除失败");
+                        }
+                    }
+                });*/
+            }
+            /*$(".btnedits").click(function() {
+                alert("ehergwehrgfry2grywryg34");
+                $.jq_Panel({
+                    title: "修改维修工",
+                    iframeWidth: 500,
+                    iframeHeight: 300,
+                    url: "editDepart.html"
+                });
+            });*/
+
+//            $(".am-btn").click(function(){
+            //                alert(123);
+            //                $.jq_Panel({
+            //                    title: "添加维修工",
+            //                    iframeWidth: 500,
+            //                    iframeHeight: 300,
+            //                    url: "editDepart.html"
+            //                });
+            //            });
+
+
+			</script>
+<!--$(document).ready(function () {
+    $.ajax({
+        url:"../../maintain/aaa",
+        type:"get",
+        data:{},
+        contentType:"application/json",
+        dataType:"json",
+        async:false,
+        success:function (result) {
+            if(result.length>0){
+                var llStr="";
+                for(var i=0;i<result.length;i++){
+                    var ulStr="<tr id='trid'>";
+                    ulStr=ulStr+"<td>"+result[i].mId+"</td>";
+                    ulStr=ulStr+"<td>";
+                    ulStr=ulStr+result[i].mName;
+                    ulStr=ulStr+"</td>";
+                    ulStr=ulStr+"<td>+result[i].mEmail</td>";
+                    ulStr=ulStr+"<td>+result[i].mPhone</td>";
+                    ulStr=ulStr+"<td>";
+                    ulStr=ulStr+"<div class='am-btn-toolbar'>";
+                    ulStr=ulStr+"<div class='am-btn-group am-btn-group-xs'><button type='button' id='depart_27' class='am-btn am-btn-default am-btn-xs am-text-secondary btnedit'><span class='am-icon-pencil-square-o'></span> 编辑</button><button type='button' class='am-btn am-btn-default am-btn-xs am-text-danger amt-hide-sm-only' onclick='deleteDepart(27,1)'><span class='am-icon-trash-o'></span> 删除</button>";
+                    ulStr=ulStr+"</div>";
+                    ulStr=ulStr+"</div>";
+                    ulStr=ulStr+"</td>";
+                    ulStr=ulStr+"</tr>";
+                    llStr+=ulStr;
+                    ulStr="";
+                };
+                $("#tUser").append(llStr);
+            }
+
+        }
+    });
+})-->
+
+			<!--function edit(){
+			    alert("shiyishi");
+                $.jq_Panel({
+                    title: "修改维修工",
+                    iframeWidth: 500,
+                    iframeHeight: 300,
+                    url: "editDepart.html",
+					data:{
+                        a:a,
+						b:b,
+						c:c,
+						d:d,
+					},
+
+                });
+				}*/
+            /*$(function() {*/
+				/*$(".btnedits").click(function() {
+				    alert("编辑");
+					$.jq_Panel({
+						title: "修改维修工",
+						iframeWidth: 500,
+						iframeHeight: 300,
+						url: "editDepart.html"
+					});
+				});*/
+				/*$(".btnAdd").click(function() {
+					$.jq_Panel({
+						title: "添加维修工",
+						iframeWidth: 500,
+						iframeHeight: 300,
+						url: "addDepart.html"
+					});
+				});
+            $(".btnedits").click(function() {
+                $.jq_Panel({
+                    title: "添加维修工",
+                    iframeWidth: 500,
+                    iframeHeight: 300,
+                    url: "addDepart.html"
+                });
+            });*/-->
+
+	</body>
+
+</html>

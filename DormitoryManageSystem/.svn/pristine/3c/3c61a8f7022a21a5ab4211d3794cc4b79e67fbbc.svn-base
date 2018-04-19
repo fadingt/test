@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+
+		<link rel="stylesheet" href="css/amazeui.min.css">
+		<link rel="stylesheet" href="css/admin.css">
+		<link rel="stylesheet" href="css/app.css">
+		<style>
+			.admin-main {
+				padding-top: 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="am-cf admin-main">
+			<!-- content start -->
+			<div class="admin-content">
+				<div class="admin-content-body">
+					<div class="am-g">
+						<form class="am-form am-form-horizontal" action="role/addroleSubmit.action" method="post" style="padding-top: 30px;">
+							<input value="504" name="roleId" type="hidden">
+							<div class="am-form-group">
+								<label for="user-name" class="am-u-sm-3 am-form-label">
+								寝室号
+								</label>
+								<div class="am-u-sm-9">
+									<input id="roleName1" required="" placeholder="寝室编号" value="" name="userName" type="text" readonly="readonly">
+									<!--<small id="helpRole">输入用户名。</small>-->
+								</div>
+							</div>
+							<div class="am-form-group">
+								<label for="user-name" class="am-u-sm-3 am-form-label">
+								报修原因
+								</label>
+								<div class="am-u-sm-9">
+									<input id="roleName2" required="" placeholder="报修原因" value="" name="name" type="text" readonly="readonly">
+									<!--<small id="helpRole">输入姓名。</small>-->
+								</div>
+							</div>
+							
+							<div class="am-form-group">
+								<label for="user-name" class="am-u-sm-3 am-form-label">
+								维修状态
+								</label>
+								<div class="am-u-sm-9">
+									<input id="roleName" required="" placeholder="待维修" value="" name="email" type="text" readonly="readonly">
+									<!--<small id="helpRole">维修工邮箱。</small>-->
+								</div>
+							</div>
+
+							<!--<div class="am-form-group">
+								<label for="user-name" class="am-u-sm-3 am-form-label">
+										性别 / sex
+									</label>
+								<div class="am-u-sm-9" style="line-height: 30px;">
+									<input type="radio" id="man" name="sex" value="1" ${user.sex==1? "checked=checked ": ""}/>
+									<label for="man">
+											男
+										</label> &nbsp;&nbsp;&nbsp;&nbsp;
+									<input type="radio" id="woman" name="sex" value="0" ${user.sex==0? "checked=checked ": ""} />
+									<label for="woman">
+											女
+										</label>
+									<br />
+									<small>性别...</small>
+								</div>
+							</div>-->
+
+							<div class="am-form-group">
+								<label for="user-email" class="am-u-sm-3 am-form-label">
+										维修工
+									</label>
+								<div class="am-u-sm-9">
+									<select name="departid" required id="user-worker" onclick="workeremail()">
+										<option value="">
+											请选择维修工
+										</option>
+
+										<!--<option value="1">-->
+											<!--开发部-->
+										<!--</option>-->
+
+									</select>
+									<small>部门</small>
+								</div>
+							</div>
+							<div class="am-form-group">
+								<div class="am-u-sm-9 am-u-sm-push-3">
+									<input id="addRole" class="am-btn am-btn-success" value="提交" type="button">
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<!--[if lt IE 9]>
+	<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+	<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+	<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+	<![endif]-->
+
+	<!--[if (gte IE 9)|!(IE)]><!-->
+	<script src="js/jquery-1.11.3.min.js"></script>
+	<!--<![endif]-->
+	<script type="text/javascript" src="myplugs/js/plugs.js"></script>
+<script>
+    $(document).ready(function () {
+        function getvalue(name) {
+            var str = window.location.search;
+            if (str.indexOf(name) != -1) {
+                var pos_start = str.indexOf(name) + name.length + 1;
+                var pos_end = str.indexOf("&", pos_start);
+                if (pos_end == -1) {
+                    return str.substring(pos_start);
+                }
+                else {
+                    return str.substring(pos_start, pos_end)
+                }
+            }
+        };
+        //获取编辑过来的宿舍id
+        var sId = getvalue("sId");
+        var rId=getvalue("rId");
+
+		//获取学生所在宿舍
+        $.ajax({
+            url:"../dromitoryinfo/studro",
+            type:"get",
+            data:{sId:sId},
+            async:false,
+            success:function(result){
+                $("#roleName1").attr('placeholder', result);//通过属性选择器设置属性值
+            }
+        });
+
+        //获取报修原因
+        $.ajax({
+            url:"../repair/represon",
+            type:"get",
+            data:{rId:rId},
+            async:false,
+            success:function(result){
+                $("#roleName2").attr('placeholder', result);//通过属性选择器设置属性值
+
+            }
+        });
+
+        //维修工名字和邮箱
+        $.ajax({
+			url:"../maintain/minfo",
+			type:"post",
+			data:{},
+			async:false,
+			success:function(result){
+                if (result.length > 0) {
+                    var llStr = "";
+                    for (var i = 0; i<result.length;i++) {
+                        var ulStr = "<option value=" + result[i].mId + ">";
+                        ulStr = ulStr + result[i].mName;
+                        ulStr = ulStr + "</option>";
+                        llStr += ulStr;
+                    };
+                    ulStr="";
+                    $("#user-worker").append(llStr);
+                }
+			}
+		});
+
+
+
+        //提交维修工
+    $("#addRole").click(function () {
+        var mId=$("#user-worker option:selected").val();
+
+		$.ajax({
+			url:"../repair/statusinfo",
+			type:"post",
+			data:{rId:rId,
+				  mId:mId,
+				sId:sId
+			},
+            async:false,
+			dataType:"json",
+			success:function(result){
+			    if(result>0){
+			        alert("提交成功，等待维修工");
+                    if(window != top){
+                        top.location.href = "index.html";
+                    }
+				}else{
+			        alert("提交失败");
+				}
+			}
+		})
+    });
+
+    });
+
+
+</script>
+</html>

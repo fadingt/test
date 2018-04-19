@@ -1,0 +1,101 @@
+package org.vaalbara.bean;
+
+/**
+ * Created by Administrator on 2018/3/12.
+ */
+public class Student {
+    private int sId;
+    private String sName;
+    private String sEmail;
+    private String sPhone;
+    private String sClass;
+    private String sPass;
+    private Profesion profesion;
+
+    public Student() {
+    }
+
+    public Student(String sEmail, String sPass) {
+        this.sEmail = sEmail;
+        this.sPass = sPass;
+    }
+
+    public Student(int sId, String sName, String sEmail, String sPhone, String sClass, String sPass, Profesion profesion) {
+        this.sId = sId;
+        this.sName = sName;
+        this.sEmail = sEmail;
+        this.sPhone = sPhone;
+        this.sClass = sClass;
+        this.sPass = sPass;
+        this.profesion = profesion;
+    }
+
+    public int getsId() {
+        return sId;
+    }
+
+    public void setsId(int sId) {
+        this.sId = sId;
+    }
+
+    public String getsName() {
+        return sName;
+    }
+
+    public void setsName(String sName) {
+        this.sName = sName;
+    }
+
+    public String getsEmail() {
+        return sEmail;
+    }
+
+    public void setsEmail(String sEmail) {
+        this.sEmail = sEmail;
+    }
+
+    public String getsPhone() {
+        return sPhone;
+    }
+
+    public void setsPhone(String sPhone) {
+        this.sPhone = sPhone;
+    }
+
+    public String getsClass() {
+        return sClass;
+    }
+
+    public void setsClass(String sClass) {
+        this.sClass = sClass;
+    }
+
+    public String getsPass() {
+        return sPass;
+    }
+
+    public void setsPass(String sPass) {
+        this.sPass = sPass;
+    }
+
+    public Profesion getProfesion() {
+        return profesion;
+    }
+
+    public void setProfesion(Profesion profesion) {
+        this.profesion = profesion;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "sId=" + sId +
+                ", sName='" + sName + '\'' +
+                ", sEmail='" + sEmail + '\'' +
+                ", sPhone='" + sPhone + '\'' +
+                ", sClass='" + sClass + '\'' +
+                ", sPass='" + sPass + '\'' +
+                ", profesion=" + profesion +
+                '}';
+    }
+}

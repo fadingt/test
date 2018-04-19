@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link rel="stylesheet" href="css/amazeui.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+
+<div class="am-cf admin-main">
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="admin-content-body">
+            <div class="am-cf am-padding am-padding-bottom-0">
+                <div class="am-fl am-cf">
+                    <strong class="am-text-primary am-text-lg"> </strong><small>
+                    <i class="icon-home"></i> &gt; 首页 &gt; 宿舍管理</small>
+                </div>
+            </div>
+            <hr>
+            <div class="container">
+                <div class="am-g">
+                    <div class="am-u-sm-12 am-u-md-6">
+                        <div class="am-btn-toolbar">
+                            <div class="am-btn-group am-btn-group-xs">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-u-sm-12 am-u-md-3">
+
+                        <select id="selDepart" data-am-selected="{btnSize: 'sm'}" style="display: none;">
+                            <option value="0">
+                                请选择部门
+                            </option>
+
+                            <option value="14">
+                                研发部
+                            </option>
+
+                            <option value="22">
+                                市场部
+                            </option>
+
+                        </select>
+
+                        <div class="am-selected am-dropdown " id="am-selected-z6ofo" data-am-dropdown="">
+
+                            <div class="am-selected-content am-dropdown-content">
+                                <h2 class="am-selected-header">
+                                    <span class="am-icon-chevron-left">返回</span>
+                                </h2>
+
+                                <div class="am-selected-hint"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="am-u-sm-12 am-u-md-3">
+                        <div class="am-input-group am-input-group-sm">
+                            <input class="am-form-field" placeholder="请输入宿舍号" id="username" type="text">
+                            <span class="am-input-group-btn">
+										<button class="am-btn am-btn-default" type="button" id="btnsearch">
+											搜索
+										</button> </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="am-g" style="margin-top: -30px;">
+                    <div class="am-u-sm-12">
+                        <form class="am-form" action="user/delAll.action">
+                            <table class="am-table am-table-striped am-table-hover table-main">
+                                <thead>
+                                <tr>
+
+                                    <th>
+                                        宿舍号
+                                    </th>
+                                    <th class="table-title">
+                                        入住状态
+                                    </th>
+                                    <th>
+                                        性别
+                                    </th>
+
+                                    <th class="table-set">
+                                        操作
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody id="tUser">
+                                <!--<tr>-->
+
+                                    <!--<td>1</td>-->
+
+                                    <!--<td>-->
+                                        <!--<a href="#">张三</a>-->
+                                    <!--</td>-->
+                                    <!--<td><span class="am-badge am-badge-secondary">男</span></td>-->
+
+                                    <!--<td>-->
+                                        <!--<div class="am-btn-toolbar">-->
+                                            <!--<div class="am-btn-group am-btn-group-xs"><button type="button" class="am-btn am-btn-default am-btn-xs am-text-secondary btnEdit"><span class="am-icon-pencil-square-o"></span> 编辑</button>-->
+
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</td>-->
+                                <!--</tr>-->
+
+
+                                </tbody>
+                            </table>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- content end -->
+    </div>
+</div>
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="js/jquery-1.11.3.min.js"></script>
+<!--<![endif]-->
+<script type="text/javascript" src="myplugs/js/plugs.js"></script>
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            //url:"../java/org.vaalbara/controller/dromitoryinfo",
+            url:"dromitoryinfo/dinfo",
+            type:"get",
+            data:{},
+            contentType:"application/json",
+            dataType:"json",
+            async:false,
+            success:function (result) {
+                if(result.length>0){
+                    var llStr="";
+                    for(var i=0;i<result.length;i++){
+                        var ulStr="<tr id='trid'>";
+                        ulStr=ulStr+"<td>"+result[i].dId+"</td>";
+                        ulStr=ulStr+"<td>";
+                        ulStr=ulStr+result[i].sIdCount+'/'+result[i].bedIdCount+'(剩余'+result[i].nullBed+'床位)';
+                        ulStr=ulStr+"</td>";
+                        ulStr=ulStr+"<td><span class='am-badge am-badge-secondary' style='background-color: #32AA9F'>男</span></td>";
+                        ulStr=ulStr+"<td>";
+                        ulStr=ulStr+"<div class='am-btn-toolbar'>";
+                        ulStr=ulStr+"<div class='am-btn-group am-btn-group-xs'><button type='button' class='am-btn am-btn-default am-btn-xs am-text-secondary btnEdit' style='color: #32AA9F' onclick='selectDinfo("+result[i].dId+")'><span class='am-icon-pencil-square-o'></span> 编辑</button>";
+                        ulStr=ulStr+"</div>";
+                        ulStr=ulStr+"</div>";
+                        ulStr=ulStr+"</td>";
+                        ulStr=ulStr+"</tr>";
+                        llStr+=ulStr;
+                    };
+                        ulStr="";
+                    $("#tUser").append(llStr);
+                }else {
+                    var ulStr="宿舍暂时关闭";
+                    $("#tUser").append(ulStr);
+                }
+
+            }
+        });
+    });
+
+//    $(function() {
+//        $(".btnAdd").click(function() {
+//            $.jq_Panel({
+//                title: "添加用户",
+//                url: "addUser.html",
+//                iframeWidth: 800,
+//                iframeHeight: 600,
+//            });
+//        });
+//
+//        $(".btnEdit").click(function() {
+////            var URL="addStuIn.html?dId="+result
+////            alert( $(".idEdit").prevAll("td:first").val());
+//            alert( $("#trid").children("td").eq(0).text());
+//            $.jq_Panel({
+//                title: "编辑学生住宿",
+//                url: "addStuIn.html",
+//                iframeWidth: 800,
+//                iframeHeight: 600,
+//            });
+//
+//        });
+//
+//    });
+
+    //传宿舍id过去
+   function selectDinfo(dId){
+            $.jq_Panel({
+                title: "编辑学生住宿",
+                url: "addStuIn.html?droId="+dId,
+                iframeWidth: 800,
+                iframeHeight: 600,
+            });
+   }
+
+    $("#btnsearch").click(function () {
+        var dId=$("#username").val();
+        $.ajax({
+            //url:"../java/org.vaalbara/controller/dromitoryinfo",
+            url:"dromitoryinfo/dinfobyid",
+            type:"post",
+            dataType:"json",
+            data: {
+                dId:dId,
+            },
+            /*contentType:"application/json",*/
+
+            async:false,
+            success:function (data) {
+                if(data.length>0){
+                    $("#username").val("");
+                    $("#tUser").empty();
+                    var llStr="";
+                    for(var j=0;j<data.length;j++){
+                        var ulStr="<tr id='trid'>";
+                        ulStr=ulStr+"<td>"+data[j].dId+"</td>";
+                        ulStr=ulStr+"<td>";
+                        ulStr=ulStr+data[j].sIdCount+'/'+data[j].bedIdCount+'(剩余'+data[j].nullBed+'床位)';
+                        ulStr=ulStr+"</td>";
+                        ulStr=ulStr+"<td><span class='am-badge am-badge-secondary' style='background-color: #32AA9F'>男</span></td>";
+                        ulStr=ulStr+"<td>";
+                        ulStr=ulStr+"<div class='am-btn-toolbar'>";
+                        ulStr=ulStr+"<div class='am-btn-group am-btn-group-xs'><button type='button' class='am-btn am-btn-default am-btn-xs am-text-secondary btnEdit' style='color: #32AA9F' onclick='selectDinfo("+data[j].dId+")'><span class='am-icon-pencil-square-o'></span> 编辑</button>";
+                        ulStr=ulStr+"</div>";
+                        ulStr=ulStr+"</div>";
+                        ulStr=ulStr+"</td>";
+                        ulStr=ulStr+"</tr>";
+                        llStr+=ulStr;
+                    };
+                    ulStr="";
+                    $("#tUser").append(llStr);
+                }else {
+                    alert("搜索有误！请输入数字和正确的宿舍号！");
+                    $("#username").val("");
+                }
+
+            }
+        });
+    })
+
+</script>
+</body>
+
+</html>

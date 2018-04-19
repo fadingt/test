@@ -1,0 +1,14 @@
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\bean\Vocation.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\service\IVocationService.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\bean\Repair.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\dao\IRepairDao.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\bean\Profesion.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\dao\IVocationDao.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\utils\JavaMailLearn.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\bean\Student.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\service\impl\VocationServiceImpl.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\controller\VocationController.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\service\impl\RepairServiceImpl.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\service\IRepairService.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\controller\RepairController.java
+D:\eclipseWorkspace\DormitoryManageSystem\src\main\java\org\vaalbara\bean\dao\VocationDao.java

@@ -1,0 +1,29 @@
+package org.vaalbara.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.vaalbara.bean.Admin;
+import org.vaalbara.service.IAdminService;
+import org.vaalbara.service.IRepairService;
+
+
+/**
+ * Created by Administrator on 2018/3/15.
+ */
+@Controller
+@RequestMapping("admin")
+public class AdminController {
+    @Autowired
+    IAdminService adminService;
+    @RequestMapping(value = "update",method = RequestMethod.POST)
+    @ResponseBody
+    public int updatePass(Admin admin){
+        System.out.println("admin/update 进来了");
+        System.out.println(admin);
+         return adminService.updatePass(admin);
+    }
+
+}

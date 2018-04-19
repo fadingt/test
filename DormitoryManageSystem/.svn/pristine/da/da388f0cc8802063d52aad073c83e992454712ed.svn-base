@@ -1,0 +1,16 @@
+package org.vaalbara.dao;
+
+import org.vaalbara.bean.Repair;
+import org.vaalbara.bean.dao.VocationDao;
+
+import java.util.List;
+
+/**
+ * Created by Administrator on 2018/3/13.
+ */
+public interface IRepairDao {
+    int addRepair(Repair repair);
+    List<VocationDao> getAllRepair();
+
+//    public int deleteRepair(VocationDao voDao);
+}

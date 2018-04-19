@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.IRepairDao">
+    <!--插入维修记录-->
+    <insert id="addRepair" parameterType="org.vaalbara.bean.Repair">
+        insert into repair (r_title,d_id,s_id,r_reason,r_begin,r_end) values(#{rTitle},#{dId},#{sId},#{rReason},#{rBegin},#{rEnd})
+    </insert>
+    <!--查询所有请假记录-->
+    <select id="getAllRepair" resultType="org.vaalbara.bean.dao.VocationDao">
+     select r_id newsId,r_reason newsName,s_id newsAuthor,r_status newsStatus ,d_id newsLook,r_id newsTime1,r_id newsTime2 from repair
+     where r_status='待维修'
+--       select r_id newsId,r_reason newsName,s_id newsAuthor,r_status newsStatus ,d_id newsLook,r_begin newsTime1,r_end newsTime2 from repair
+--      where r_status='待维修'
+    </select>
+
+    <!--查询学生维修原因-->
+    <select id="getRepair" resultType="String" parameterType="org.vaalbara.dao.IRepairDao">
+          select r_reason FROM repair where r_id=#{rId}
+    </select>
+
+    <!--修改宿舍住宿情况-->
+    <update id="updateRepStatus"  parameterType="org.vaalbara.dao.IRepairDao">
+        update repair set r_status='已维修',m_id=#{mId} where r_id=#{rId}
+    </update>
+    <!--<select id="getVocationById" resultMap="stuEmail" parameterType="org.vaalbara.bean.dao.VocationDao">-->
+        <!--select v.v_begin,v.v_end,s.s_email,s.s_name from vocation v ,student s-->
+        <!--where v.s_id=s.s_id and v.s_id=#{newsAuthor}-->
+    <!--</select>-->
+    <!--<resultMap id="stuEmail" type="org.vaalbara.bean.Student">-->
+
+        <!--<result property="sName" column="s_name" ></result>-->
+        <!--<result property="sEmail" column="s_email"></result>-->
+        <!--<association property="vocation" javaType="org.vaalbara.bean.Vocation">-->
+            <!--<result property="vBegin" column="v_begin"></result>-->
+            <!--<result property="vEnd" column="v_end"></result>-->
+        <!--</association>-->
+    <!--</resultMap>-->
+    <!--<update id="checkVocation" parameterType="org.vaalbara.bean.dao.VocationDao">-->
+        <!--update vocation set v_status='审核通过' where v_id=#{newsId}-->
+    <!--</update>-->
+    <!--<update id="deleteVocation" parameterType="org.vaalbara.bean.dao.VocationDao">-->
+        <!--update vocation set v_status='审核不通过' where v_id=#{newsId}-->
+    <!--</update>-->
+</mapper>

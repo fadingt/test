@@ -1,0 +1,14 @@
+org\vaalbara\dao\IVocationDao.class
+org\vaalbara\service\impl\RepairServiceImpl.class
+org\vaalbara\service\IVocationService.class
+org\vaalbara\bean\Vocation.class
+org\vaalbara\bean\Student.class
+org\vaalbara\controller\VocationController.class
+org\vaalbara\controller\RepairController.class
+org\vaalbara\service\IRepairService.class
+org\vaalbara\utils\JavaMailLearn.class
+org\vaalbara\service\impl\VocationServiceImpl.class
+org\vaalbara\bean\Repair.class
+org\vaalbara\dao\IRepairDao.class
+org\vaalbara\bean\dao\VocationDao.class
+org\vaalbara\bean\Profesion.class

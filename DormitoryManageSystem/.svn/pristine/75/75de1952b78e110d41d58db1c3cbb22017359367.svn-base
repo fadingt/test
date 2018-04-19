@@ -1,0 +1,8 @@
+package org.vaalbara.bean;
+
+/**
+ * Created by Administrator on 2018/3/12.
+ */
+public class Student {
+
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.INoticeDao">
+    <!--根据notice内容向数据库添加数据-->
+    <insert id="addNotice" parameterType="org.vaalbara.bean.Notice">
+        INSERT INTO notice(n_title,n_content,n_pic,n_date,a_id,a_name) VALUES (#{nTitle},#{nContent},#{nPic},SYSDATE(),#{aId},#{aName})
+    </insert>
+
+    <!--查询所有的links信息(notice)-->
+    <select id="getAllLinks" resultType="org.vaalbara.bean.Links">
+        SELECT n.n_id linksId,n.n_title linksName,n.n_pic linksUrl,a.a_name masterEmail,date_format(n.n_date,'%Y-%m-%d %H:%i:%s') linksTime
+        FROM notice n,admins a
+        WHERE n.a_id=a.a_id
+        ORDER BY n_date DESC
+    </select>
+    
+    <!--删除一条公告-->
+    <delete id="delNotice" parameterType="int">
+        DELETE FROM notice WHERE n_id = #{id}
+    </delete>
+
+    <!--查询出所有notice-->
+    <select id="getAllNotice" resultType="org.vaalbara.bean.Notice">
+        SELECT * FROM notice ORDER BY n_date DESC
+    </select>
+
+    <!--根据id查询一条notice-->
+    <select id="getNoticeById" resultType="org.vaalbara.bean.Notice" parameterType="int">
+        SELECT * FROM notice WHERE  n_id = #{id}
+    </select>
+
+    <!--根据完整的一个notice对象进行修改-->
+    <update id="updateNotice" parameterType="org.vaalbara.bean.Notice">
+        UPDATE notice SET n_title=#{nTitle},n_pic=#{nPic},n_content=#{nContent} WHERE n_id=#{nId}
+    </update>
+
+</mapper>

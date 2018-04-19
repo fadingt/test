@@ -1,0 +1,31 @@
+package org.vaalbara.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.vaalbara.bean.Repair;
+import org.vaalbara.bean.Vocation;
+import org.vaalbara.bean.dao.VocationDao;
+import org.vaalbara.dao.IRepairDao;
+import org.vaalbara.dao.IVocationDao;
+import org.vaalbara.service.IRepairService;
+
+import java.util.List;
+
+/**
+ * Created by Administrator on 2018/3/13.
+ */
+@Service
+public class RepairServiceImpl  implements IRepairService{
+    @Autowired    //让spring 注入一个dao  autowired 会根据类型去匹配对应的对象
+    private IRepairDao repairDao;
+    public int  addRepair(Repair repair) {
+        return repairDao.addRepair(repair);
+    }
+    public List<VocationDao> getAllRepair(){
+        return repairDao.getAllRepair();
+    }
+
+//    public int deleteRepair(VocationDao voDao){
+//        return repairDao.deleteRepair(voDao);
+//    }
+}

@@ -9,7 +9,7 @@ xsi:schemaLocation=
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 	<!--配置自动扫描的包 -->
-	<context:component-scan base-package="web,service" />
+	<context:component-scan base-package="action,service" />
 	<!--设置配置方案 -->
 	<mvc:annotation-driven />
 
@@ -21,5 +21,5 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 	</bean>
 	<bean id="hibernateUserDaoImpl" class="dao.impl.HibernateUserDaoImpl"/>
 	<bean id="userServiceImpl" class="service.impl.UserServiceImpl"/>
-
+	
 </beans>

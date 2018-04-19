@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.IStuDao">
+
+    <!--学生登陆系统验证-->
+    <select id="studentLogin" resultType="org.vaalbara.bean.Student" parameterType="org.vaalbara.bean.Student">
+        select * from student s LEFT join profesion p on s.p_id = p.p_id where s.s_email = #{sEmail} and s.s_pass = #{sPass}
+    </select>
+
+    <!--查询学生注册邮箱是否重复-->
+    <select id="getStudentsByEmail" resultType="int" parameterType="String">
+        select COUNT(*) from student WHERE s_email = #{sEmail}
+    </select>
+
+    <!--学生注册系统时,将邮箱,密码添加至数据库-->
+    <insert id="addStudent" parameterType="org.vaalbara.bean.Student">
+        insert into student(s_email,s_pass)  values(#{sEmail},#{sPass})
+    </insert>
+
+    <!--学生更改自己的个人信息-->
+    <update id="updateStudent" parameterType="org.vaalbara.bean.Student">
+        update student
+        <set>
+            <if test="sName!= null  &amp;&amp; sName != ''  ">s_name=#{sName},</if>
+            <if test="sPhone!= null &amp;&amp; sPhone != '' ">s_phone=#{sPhone},</if>
+            <if test="pId!= null &amp;&amp; pId != '' ">p_id=#{pId},</if>
+            <if test="sClass!= null &amp;&amp; sClass != '' ">s_class=#{sClass}</if>
+        </set>
+        where s_email=#{sEmail}
+    </update>
+    <!--学生查询自己的订单信息-->
+    <select id="getStudentRepair" resultType="org.vaalbara.bean.Repair" parameterType="int">
+        SELECT r.r_id,r.r_reason,m.m_name from repair r,maintain m where r.m_id = m.m_id and r.r_status = '已维修' and r.s_id = #{sId} LIMIT 0, 3
+    </select>
+
+    <!--学生评价自己的订单信息-->
+    <update id="updateStudentRepair" parameterType="org.vaalbara.bean.Repair">
+        UPDATE repair set grade = #{grade} , r_status = '已评价' where r_id = #{rId}
+    </update>
+
+    <!--学生更改自己的密码-->
+    <update id="updateStuPass" parameterType="org.vaalbara.bean.Student">
+        update student set s_pass =#{sPass} where s_email = #{sEmail}
+    </update>
+    <!--查询全部学生-->
+    <select id="getStudents" resultType="org.vaalbara.bean.Student">
+        select * from student where s_status>=0
+    </select>
+    <!--修改学生-->
+    <update id="updateStudent1" parameterType="org.vaalbara.bean.Student" useGeneratedKeys="true" keyProperty="sId">
+        update student set s_name=#{sName},s_email=#{sEmail},s_phone=#{sPhone},d_id=#{dId},p_id=#{pId},s_class=#{sClass} where s_id=#{sId}
+    </update>
+    <!--删除学生-->
+    <update id="deleteStudent" parameterType="int">
+        update student set s_status=-1 where s_id=#{sId}
+    </update>
+    <!--查询学生-->
+    <select id="selectStudent" parameterType="String" resultType="org.vaalbara.bean.Student">
+        select * from student where s_name like '%${sName}%'
+    </select>
+
+
+    <!--定义学生对象的返回值-->
+    <resultMap id="stuMap" type="org.vaalbara.bean.Student" >
+        <id property="sId" column="s_id"></id>
+        <result property="sName" column="s_name" ></result>
+        <result property="sEmail" column="s_email"></result>
+        <result property="sPass" column="s_pass"></result>
+        <result property="sPhone" column="s_phone"></result>
+        <result property="sClass" column="s_class"></result>
+        <association property="profesion" javaType="org.vaalbara.bean.Profesion">
+            <id property="pId" column="p_id"></id>
+            <result property="pName" column="p_name"></result>
+        </association>
+
+    </resultMap>
+
+
+
+
+
+
+</mapper>

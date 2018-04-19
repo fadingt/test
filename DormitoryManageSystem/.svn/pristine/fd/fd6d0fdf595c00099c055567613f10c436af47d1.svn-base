@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link rel="stylesheet" href="css/amazeui.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/app.css">
+    <style>
+        .admin-main {
+            padding-top: 0px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="am-cf admin-main">
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="admin-content-body">
+            <div class="am-g">
+                <form class="am-form am-form-horizontal" action="" method="post" style="padding-top: 30px;">
+                    <input value="504" name="roleId" type="hidden">
+                    <div class="am-form-group">
+                        <label for="user-name" class="am-u-sm-3 am-form-label">
+                            宿舍号
+                        </label>
+                        <div class="am-u-sm-9">
+                            <input id="roleName1" required="" placeholder="" value="" name="userName" type="text" readonly="true">
+                            <small id="helpRole1">当前宿舍号。</small>
+                        </div>
+                    <div class="am-form-group">
+                        <label for="user-name" class="am-u-sm-3 am-form-label">
+                            一号床
+                        </label>
+                        <div class="am-u-sm-9">
+                            <input id="roleName2" class="roleadd2" required="" placeholder="一号床未安排该宿舍" value="" name="email" type="text">
+                            <small id="helpRole2">若需要更换宿舍或退宿请把学号改成0。</small>
+                        </div>
+                    </div>
+                        <div class="am-form-group">
+                            <div class="am-u-sm-9 am-u-sm-push-3">
+                                <input id="addRole2" class="am-btn am-btn-success roleadd2" value="确认更改信息" type="button" >
+                            </div>
+                        </div>
+                    <div class="am-form-group">
+                        <label for="user-name" class="am-u-sm-3 am-form-label">
+                            二号床
+                        </label>
+                        <div class="am-u-sm-9">
+                            <input id="roleName3" required="" placeholder="二号床未安排该宿舍" value="" name="name" type="text">
+                            <small id="helpRole3">若需要更换宿舍或退宿请把学号改成0。</small>
+                        </div>
+                    </div>
+                        <div class="am-form-group">
+                            <div class="am-u-sm-9 am-u-sm-push-3">
+                                <input id="addRole3" class="am-btn am-btn-success" value="确认更改信息" type="button">
+                            </div>
+                        </div>
+                    <div class="am-form-group">
+                        <label for="user-name" class="am-u-sm-3 am-form-label">
+                            三号床
+                        </label>
+                        <div class="am-u-sm-9">
+                            <input id="roleName4" required="" placeholder="三号床未安排该宿舍" value="" name="email" type="text">
+                            <small id="helpRole4">若需要更换宿舍或退宿请把学号改成0。</small>
+                        </div>
+                    </div>
+                        <div class="am-form-group">
+                            <div class="am-u-sm-9 am-u-sm-push-3">
+                                <input id="addRole4" class="am-btn am-btn-success" value="确认更改信息" type="button">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <label for="user-name" class="am-u-sm-3 am-form-label">
+                            四号床
+                        </label>
+                        <div class="am-u-sm-9">
+                            <input id="roleName5" required="" placeholder="四号床未安排该宿舍" value="" name="name" type="text">
+                            <small id="helpRole5">若需要更换宿舍或退宿请把学号改成0。</small>
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <div class="am-u-sm-9 am-u-sm-push-3">
+                            <input id="addRole5" class="am-btn am-btn-success" value="确认更改信息" type="button">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="js/jquery-1.11.3.min.js"></script>
+<!--<![endif]-->
+<script type="text/javascript" src="myplugs/js/plugs.js"></script>
+<script>
+    $(document).ready(function () {
+        function getvalue(name) {
+            var str = window.location.search;
+            if (str.indexOf(name) != -1) {
+                var pos_start = str.indexOf(name) + name.length + 1;
+                var pos_end = str.indexOf("&", pos_start);
+                if (pos_end == -1) {
+                    return str.substring(pos_start);
+                }
+                else {
+                    return str.substring(pos_start, pos_end)
+                }
+            }
+        };
+        //获取编辑过来的宿舍id
+        var dId = getvalue("droId");
+        $("#roleName1").attr('placeholder',dId);//通过属性选择器设置属性值
+
+
+        //页面开始时加载宿舍床位情况
+        $.ajax({
+            url:"../dromitoryinfo/sinfo",
+            type:"get",
+            data:{dId:dId},
+            dataType:"json",
+            async:false,
+            success:function(result){
+                for(var i=0;i<result.length;i++){
+                    if(result[i].sId!=0&&result[i].sId!=null){
+                        $("#roleName"+(i+2)).attr('placeholder',result[i].sId+"(已住人)");
+                    }else{
+                        $("#roleName"+(i+2)).attr('placeholder',"(该床位未住人，如果需要请填写入住学生学号)");
+                    }
+
+                }
+            }
+        });
+
+        //点击事件一
+        $("#addRole2").click(function() {
+            var sId=$("#roleName2").val();
+            var bedId=1;
+            $.ajax({
+                url:"../dromitoryinfo/dsinfo",
+                type:"get",
+                async:false,
+                data:{
+                    dId:dId,
+                    bedId:bedId,
+                    sId:sId},
+                contentType:"application/json",
+                success:function(result){
+                    if(result==1){
+                       alert("更改成功！");
+                        if(window != top){
+                            top.location.href = "index.html";
+                        }
+                    }else if(result==0){
+                        alert("更改失败");
+                    }else {
+                        alert("该学生已经"+result+"号宿舍")
+                    }
+                }
+            });
+        });
+
+        //点击事件二
+        $("#addRole3").click(function() {
+            var sId=$("#roleName3").val();
+            var bedId=2;
+            $.ajax({
+                url:"../dromitoryinfo/dsinfo",
+                type:"get",
+                async:false,
+                data:{
+                    dId:dId,
+                    bedId:bedId,
+                    sId:sId},
+                contentType:"application/json",
+                success:function(result){
+                    if(result==1){
+                        alert("更改成功！");
+                        if(window != top){
+                            top.location.href = "index.html";
+                        }
+                    }else if(result==0){
+                        alert("更改失败");
+                    }else {
+                        alert("该学生已经"+result+"号宿舍")
+                    }
+                }
+            });
+        });
+
+        //点击事件三
+        $("#addRole4").click(function() {
+            var sId=$("#roleName4").val();
+            var bedId=3;
+            $.ajax({
+                url:"../dromitoryinfo/dsinfo",
+                type:"get",
+                async:false,
+                data:{
+                    dId:dId,
+                    bedId:bedId,
+                    sId:sId},
+                contentType:"application/json",
+                success:function(result){
+                    if(result==1){
+                        alert("更改成功！");
+                        if(window != top){
+                            top.location.href = "index.html";
+                        }
+                    }else if(result==0){
+                        alert("更改失败");
+                    }else {
+                        alert("该学生已经"+result+"号宿舍")
+                    }
+                }
+            });
+        });
+
+        //点击事件四
+        $("#addRole5").click(function() {
+            var sId=$("#roleName5").val();
+            var bedId=4;
+            $.ajax({
+                url:"../dromitoryinfo/dsinfo",
+                type:"get",
+                async:false,
+                data:{
+                    dId:dId,
+                    bedId:bedId,
+                    sId:sId},
+                contentType:"application/json",
+                success:function(result){
+                    if(result==1){
+                        alert("更改成功！");
+                        if(window != top){
+                            top.location.href = "index.html";
+                        }
+                    }else if(result==0){
+                        alert("更改失败");
+                    }else {
+                        alert("该学生已经"+result+"号宿舍")
+                    }
+                }
+            });
+        });
+
+    })
+
+</script>
+</body>
+</html>

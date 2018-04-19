@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.IAdminDao">
+
+    <update id="updatePass" parameterType="org.vaalbara.bean.Admin">
+        update admins set a_pass=#{aPass} where a_id=#{aId}
+    </update>
+
+    <select id="adminLogin" parameterType="org.vaalbara.bean.Admin" resultType="org.vaalbara.bean.Admin">
+        select * from admins where a_name = #{aName} and a_pass = #{aPass}
+    </select>
+</mapper>

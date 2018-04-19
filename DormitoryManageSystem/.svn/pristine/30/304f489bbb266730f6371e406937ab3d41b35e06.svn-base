@@ -1,0 +1,10 @@
+package org.vaalbara.service;
+
+import org.vaalbara.bean.Admin;
+
+/**
+ * Created by Administrator on 2018/3/15.
+ */
+public interface IAdminService {
+    public int updatePass(Admin admin);
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.vaalbara.dao.ICriticizeDao">
+    <!--查询处分表中所有数据-->
+    <select id="getAllCriticize" resultType="org.vaalbara.bean.News">
+        SELECT c_id newsId,c_rason newsName,s_id newsAuthor,date_format(c_date,'%Y-%m-%d') newsTime
+        FROM criticize
+        ORDER BY c_id DESC
+    </select>
+
+    <!--根据Criticize对象将数据插入数据库-->
+    <insert id="addCriticize" parameterType="org.vaalbara.bean.Criticize">
+        INSERT INTO criticize(s_id,c_rason,c_date) VALUES (#{sId},#{cRason},#{cDate})
+    </insert>
+
+    <!--根据id删除一条处分-->
+    <delete id="delCriticize" parameterType="int">
+        DELETE FROM criticize WHERE c_id=#{id}
+    </delete>
+
+
+    <!--根据id单条查询处分表中数据-->
+    <select id="getCriticize" resultType="org.vaalbara.bean.Criticize" parameterType="int">
+        SELECT * FROM criticize WHERE c_id = #{cId}
+    </select>
+
+
+    <!--修改criticize信息-->
+    <update id="modCriticize" parameterType="org.vaalbara.bean.Criticize">
+        UPDATE criticize SET c_rason=#{cRason} WHERE c_id=#{cId}
+    </update>
+
+
+</mapper>
