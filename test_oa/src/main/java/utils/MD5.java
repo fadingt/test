@@ -10,7 +10,9 @@ import java.util.Base64.Encoder;
 public class MD5 {
 	public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 //		System.out.println(getMD5("z13833545277"));
-		System.out.println(getMD5("superadmin_queryuser"));
+//		System.out.println(getMD5("superadmin_queryuser"));
+		System.out.println(getMD5(getMD5("000000")));
+		System.out.println("ff92a240d11b05ebd392348c35f781b2".equals(getMD5(getMD5("000000"))));
 //		System.out.println("a184e2b63e5a54bc418e637e6cec1ab2");
 //		System.out.println(EncoderByMd5("z13833545277"));
 //		System.out.println(EncoderByMd5("0123456789"));

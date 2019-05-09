@@ -5,8 +5,9 @@ import java.util.Map;
 
 import dao.UserDao;
 import domain.User;
+import org.springframework.stereotype.Component;
 import utils.HibernateUtil;
-
+@Component
 public class HibernateUserDaoImpl implements UserDao{
 
 	@Override

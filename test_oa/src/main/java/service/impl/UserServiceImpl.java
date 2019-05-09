@@ -55,7 +55,7 @@ public class UserServiceImpl implements IUserService {
 		User user = new User();
 		user.setUsercode("A001231213");
 		user.setPassword("3AFD6E38E6B725FE2466D5263B05039E");
-		ApplicationContext cxt = new ClassPathXmlApplicationContext("dispatcherServlet-servlet.xml");
+		ApplicationContext cxt = new ClassPathXmlApplicationContext("applicationServlet.xml");
 		UserServiceImpl userService = (UserServiceImpl) cxt.getBean("userServiceImpl");
 		userService.saveUser(user);
 		((AbstractXmlApplicationContext) cxt).close();
