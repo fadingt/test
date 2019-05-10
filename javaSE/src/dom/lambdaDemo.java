@@ -5,12 +5,15 @@ interface myLambdaInterface {
     void doSomething(String s);
 }
 
-public class lambda {
+public class lambdaDemo {
+
+    public static void setaBlockOfCode(myLambdaInterface aBlockOfCode, String s) {
+        aBlockOfCode.doSomething(s);
+    }
+
     public static void main(String[] args) {
-        myLambdaInterface aBlockOfCode = (s)-> System.out.println(s);
-//        myLambdaInterface aBlockOfCode = public void doSomething(String s){
-//            System.out.println(s);
-//        }
+
+        setaBlockOfCode(s -> System.out.println(s), "hello world");
     }
 
 }

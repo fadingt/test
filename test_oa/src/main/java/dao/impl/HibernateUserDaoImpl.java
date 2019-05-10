@@ -9,7 +9,13 @@ import org.springframework.stereotype.Component;
 import utils.HibernateUtil;
 @Component
 public class HibernateUserDaoImpl implements UserDao{
-
+    /*
+    * 单元测试
+    * */
+	public static void main(String[] args) {
+		User user = new HibernateUserDaoImpl().getUserById(15);
+        System.out.println(user.getPassword());
+	}
 	@Override
 	public void updateUser(User user) {
 		HibernateUtil.updateObject(user);

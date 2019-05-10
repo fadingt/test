@@ -22,6 +22,5 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
         <property name="providerClass" value="org.hibernate.validator.HibernateValidator"></property>
     </bean>
-
-
+    <!--<bean id="userServiceImpl" class="service.impl.UserServiceImpl"></bean>-->
 </beans>

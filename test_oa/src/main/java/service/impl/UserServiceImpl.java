@@ -40,7 +40,7 @@ public class UserServiceImpl implements IUserService {
 			return OpStatus.OperateType.NOT_PROP.getNum();
 		} else {
 			User userreal = list.iterator().next();
-			if (userreal.getPassword() != user.getPassword()) {
+			if (!userreal.getPassword().equals(user.getPassword())) {
 				System.out.println("password do not match");
 				return OpStatus.OperateType.NOT_MATCH.getNum();
 			}
@@ -53,11 +53,13 @@ public class UserServiceImpl implements IUserService {
 	 */
 	public static void main(String[] args) {
 		User user = new User();
-		user.setUsercode("A001231213");
-		user.setPassword("3AFD6E38E6B725FE2466D5263B05039E");
+		user.setUsercode("A0025");
+		user.setPassword("6a8785951d58d7e56232e4e88bb195ab");
 		ApplicationContext cxt = new ClassPathXmlApplicationContext("applicationServlet.xml");
 		UserServiceImpl userService = (UserServiceImpl) cxt.getBean("userServiceImpl");
-		userService.saveUser(user);
+//		userService.saveUser(user);
+        int result = userService.loginCheck(user);
+        System.out.println(result);
 		((AbstractXmlApplicationContext) cxt).close();
 	}
 

@@ -16,49 +16,48 @@ public class Doc {
 		printNode(doc, 0);
 	}
 
-	public static void printNode(Node node, int count) {
+	private static void printNode(Node node, int count) {
 		if (node != null) {
-			String tmp = "";
+			StringBuilder tmp = new StringBuilder();
 			for (int i = 0; i < count; i++)
-				tmp += "  ";
-			// 获取node节点的节点类型，赋值给nodeType变量
+				tmp.append(" ");
 			int nodeType = node.getNodeType();
 			switch (nodeType) {
 			case Node.ATTRIBUTE_NODE:
-				tmp += "ATTRIBUTE";
+				tmp.append("ATTRIBUTE");
 				break;
 			case Node.CDATA_SECTION_NODE:
-				tmp += "CDATA_SECTION";
+				tmp.append("CDATA_SECTION");
 				break;
 			case Node.COMMENT_NODE:
-				tmp += "COMMENT";
+				tmp.append("COMMENT");
 				break;
 			case Node.DOCUMENT_FRAGMENT_NODE:
-				tmp += "DOCUMENT_FRAGMENT";
+				tmp.append("DOCUMENT_FRAGMENT");
 				break;
 			case Node.DOCUMENT_NODE:
-				tmp += "DOCUMENT";
+				tmp.append("DOCUMENT");
 				break;
 			case Node.DOCUMENT_TYPE_NODE:
-				tmp += "DOCUMENT_TYPE";
+				tmp.append("DOCUMENT_TYPE");
 				break;
 			case Node.ELEMENT_NODE:
-				tmp += "ELEMENT";
+				tmp.append("ELEMENT");
 				break;
 			case Node.ENTITY_NODE:
-				tmp += "ENTITY";
+				tmp.append("ENTITY");
 				break;
 			case Node.ENTITY_REFERENCE_NODE:
-				tmp += "ENTITY_REFERENCE";
+				tmp.append("ENTITY_REFERENCE");
 				break;
 			case Node.NOTATION_NODE:
-				tmp += "NOTATION";
+				tmp.append("NOTATION");
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
-				tmp += "PROCESSING_INSTRUCTION";
+				tmp.append("PROCESSING_INSTRUCTION");
 				break;
 			case Node.TEXT_NODE:
-				tmp += "TEXT";
+				tmp.append("TEXT");
 				break;
 			default:
 				return;// invalid node type.
@@ -66,7 +65,7 @@ public class Doc {
 
 			System.out.println(tmp + " (" + node.getNodeName() + "," + node.getNodeValue() + ")");
 			/*
-			 * node.getAttributes()方法返回 包含node节点的属性的 NamedNodeMap（如果它是 Element）
+			 * node.getAttributes()路陆路篓路碌禄脴 掳眉潞卢node陆脷碌茫碌脛脢么脨脭碌脛 NamedNodeMap拢篓脠莽鹿没脣眉脢脟 Element拢漏
 			 */
 			NamedNodeMap attrs = node.getAttributes();
 			if (attrs != null)
@@ -74,7 +73,7 @@ public class Doc {
 					printNode(attrs.item(i), count + 1);
 				}
 			/*
-			 * node.getChildNodes()方法返回 包含node节点的所有子节点的 NodeList。
+			 * node.getChildNodes()路陆路篓路碌禄脴 掳眉潞卢node陆脷碌茫碌脛脣霉脫脨脳脫陆脷碌茫碌脛 NodeList隆拢
 			 */
 			NodeList childNodes = node.getChildNodes();
 			for (int i = 0; i < childNodes.getLength(); i++) {
