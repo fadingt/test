@@ -2,3 +2,5 @@
 *.rar
 /.metadata/
 /.recommenders/
+/.idea/
+test.iml
