@@ -1,6 +1,6 @@
 package utils;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -8,15 +8,13 @@ import java.util.Base64;
 import java.util.Base64.Encoder;
 
 public class MD5 {
-	public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//		System.out.println(getMD5("z13833545277"));
-//		System.out.println(getMD5("superadmin_queryuser"));
-		System.out.println(getMD5(getMD5("000000")));
-		System.out.println("ff92a240d11b05ebd392348c35f781b2".equals(getMD5(getMD5("000000"))));
-//		System.out.println("a184e2b63e5a54bc418e637e6cec1ab2");
-//		System.out.println(EncoderByMd5("z13833545277"));
-//		System.out.println(EncoderByMd5("0123456789"));
-	}
+	public static void main(String[] args) throws IOException{
+		System.out.println("please input a String:");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String inputStr = br.readLine().trim();
+        System.out.println(getMD5(getMD5(inputStr)));
+        System.out.println(EncoderByMd5(EncoderByMd5(inputStr)));
+    }
 
 	public static String getMD5(String str) {
 		MessageDigest md;
@@ -29,11 +27,20 @@ public class MD5 {
 		return new BigInteger(1, md.digest()).toString(16);
 	}
 
-	public static String EncoderByMd5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		Encoder en = Base64.getEncoder();
-		String newstr = new String(en.encode(md5.digest(str.getBytes("utf-8"))));
-		return newstr;
+	public static String EncoderByMd5(String str){
+	    if(str==null){throw new RuntimeException("String cannot be null");}
+        MessageDigest md5 = null;
+        String newstr = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+            Encoder en = Base64.getEncoder();
+            newstr = new String(en.encode(md5.digest(str.getBytes("utf-8"))));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return newstr;
 	}
 
 }

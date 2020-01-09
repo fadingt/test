@@ -1,6 +1,15 @@
 *.jar
 *.rar
+*.war
+*.iml
+*.class
+*.log
+*.log.*
+target/
+log/
+.idea/
 /.metadata/
 /.recommenders/
-/.idea/
-test.iml
+
+.settings/
+.project/

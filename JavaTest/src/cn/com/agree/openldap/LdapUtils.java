@@ -27,7 +27,8 @@ public class LdapUtils {
     //protected final static Logger logger = LoggerFactory.getLogger(LdapUtils.class);
     private static LdapContext dc = null;
 	private static final Control[] connCtls = null;
-    private static final String LDAP_URL = "ldap://192.168.180.247:389/";// LDAP访问地址
+//    private static final String LDAP_URL = "ldap://192.168.180.247:389/";// LDAP访问地址
+    private static final String LDAP_URL = "ldap:/192.9.200.247：389/";//LDAP测试地址
     private static final String root = "dc=agree,dc=com";// LDAP的根节点的DC
     private static final String ADMINUSERNAME = "cn=root,dc=agree,dc=com";  // 用户名,就是dn，例如（uid=student1,ou=class1,ou=school1,dc=*,dc=com）
     private static final String ADMINPASSWORD = "123456";// 密码
