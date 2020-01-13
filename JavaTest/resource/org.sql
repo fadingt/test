@@ -1,0 +1,1 @@
+SELECT S_ORGCODE,S_NAME from paas_aom.mdl_aos_hrorg

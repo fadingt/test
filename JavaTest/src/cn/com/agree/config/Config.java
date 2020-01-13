@@ -1,4 +1,4 @@
-package cn.com.agree.openldap;
+package cn.com.agree.config;
 
 import java.io.*;
 import java.util.Enumeration;

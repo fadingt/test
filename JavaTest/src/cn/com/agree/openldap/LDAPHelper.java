@@ -4,12 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.sql.SQLException;
+import java.util.*;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
@@ -30,30 +26,30 @@ import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.PagedResultsControl;
 import javax.naming.ldap.PagedResultsResponseControl;
 
+import cn.com.agree.config.LDAPConfig;
+import cn.com.agree.utils.JDBCUtils;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 public class LDAPHelper {
-    private String URL = null;
     private String BASEDN = null; // 根据自己情况进行修改
     private final String FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
     private LdapContext ctx = null;
     private final Control[] connCtls = null;
-    private String root = null;//管理员用户
-    private String rootpwd = null;//管理员用户密码
-    private HashMap<String, String> de_map = null;
-    private HashMap<String, String> de_map_reverse = null;
+    private Map<String, String> de_map = null;
     private static int pageNo = 0;
-    private String allUsersFileName = null;
+//    private String allUsersFileName = null;
 
-    public LDAPHelper() {
-
+    public LDAPHelper() throws IOException, SQLException, ClassNotFoundException {
+        Map<String,String> de_map = new HashMap<String,String>();
+        String sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\org.sql"));
+        this.de_map = JDBCUtils.getOrgMap(sql);
     }
 
-    public LDAPHelper(String deMapFileName, String allUsersFileName, boolean bHAS_HEADER_FLAG) {
+/*    public LDAPHelper(String deMapFileName, String allUsersFileName, boolean bHAS_HEADER_FLAG) {
         ExcelRead.setHAS_HEADER_FLAG(bHAS_HEADER_FLAG);
         getDeMapInfo(deMapFileName);
         this.allUsersFileName = allUsersFileName;
-    }
+    }*/
 
     private void LDAP_connect(LDAPConfig config) {
         Hashtable<String, String> env = new Hashtable<String, String>();
@@ -123,7 +119,7 @@ public class LDAPHelper {
             NamingEnumeration<SearchResult> en = ctx.search("", "uid=" + uid, constraints);
 
             if (en == null || !en.hasMoreElements()) {
-                //System.out.println("未找到该用户");
+                throw new RuntimeException("未找到该用户");
             }
             // maybe more than one element
             while (en != null && en.hasMoreElements()) {
@@ -204,8 +200,8 @@ public class LDAPHelper {
             System.out.println(userDN + " 验证失败");
             valide = false;
         } catch (IOException e) {
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 //		closeContext();
         return valide;
     }
@@ -251,13 +247,13 @@ public class LDAPHelper {
                     SearchResult si = (SearchResult) obj;
                     String dn = si.getName();
                     if (dn.indexOf(dir) != -1) {
-                        System.out.println("dn:" + dn);
+//                        System.out.println("dn:" + dn);
                         count++;
                         ctx.destroySubcontext(dn);
                     }
                 }
             }
-            System.out.println("count=" + count);
+            System.out.println("deleteAllUsers count=" + count);
             return true;
 
         } catch (Exception e) {
@@ -337,14 +333,13 @@ public class LDAPHelper {
     }
 
     public boolean createDepartment(String path, int index) {
+        if (!isConnect()) {
+            return false;
+        }
+        String pathParent = "";
+        String ouName = "";
+        String ouNo = "";
         try {
-            String pathParent = "";
-            String ouName = "";
-            String ouNo = "";
-            if (!isConnect()) {
-                return false;
-            }
-
             String[] paths = path.split(",");
             if (index >= paths.length) {
                 return true;
@@ -452,6 +447,48 @@ public class LDAPHelper {
             ex.printStackTrace();
         }
         //closeContext();
+        return false;
+    }
+
+    public boolean addUser(UserDO user) {
+        String uid = user.getUserid() + "";
+        String pwd = user.getPassword();
+        String cn = "cn";
+        String path = user.getOrgcode();
+        try {
+            if (!isConnect()) {
+                return false;
+            }
+            if (getUserDN(uid) == "") {
+                BasicAttributes attrsbu = new BasicAttributes();
+                BasicAttribute objclassSet = new BasicAttribute("objectclass");
+                objclassSet.add("person");
+                objclassSet.add("top");
+                objclassSet.add("organizationalPerson");
+                objclassSet.add("inetOrgPerson");
+                attrsbu.put(objclassSet);
+                attrsbu.put("sn", cn);
+                attrsbu.put("cn", cn);
+                attrsbu.put("displayName", cn);
+                attrsbu.put("uid", uid);
+                attrsbu.put("userPassword", pwd);
+                attrsbu.put("description", uid);
+                String[] paths = path.split(",");
+                String pathParent = "";
+                for (int i = 0; i < paths.length; i++) {
+                    pathParent += ",ou=" + de_map.get(paths[i].substring(3));
+                }
+
+                String userDN = "uid=" + uid + pathParent;
+                ctx.createSubcontext(userDN, attrsbu);
+
+                return true;
+            } else {
+                return true;
+            }
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        }
         return false;
     }
 
@@ -810,7 +847,7 @@ public class LDAPHelper {
         }
     }
 
-    private void getDeMapInfo(String fileName) {
+/*    private void getDeMapInfo(String fileName) {
         if (de_map == null)
             de_map = ExcelRead.readDEMapFromExcel(fileName);
 //    		de_map = ExcelRead.readDEMapFromExcel("e:\\eclipse\\doc\\bumen_0903.xls");
@@ -819,17 +856,16 @@ public class LDAPHelper {
 ////		    	System.out.println(en.getKey()+ "=" + en.getValue());
 //		    	de_map_reverse.put(en.getValue(), en.getKey());
 //		    }
-    }
+    }*/
 
-    public void createTreeByExcel() {
-        List<UsersData> list = ExcelRead.readUsersDataFromExcel(this.allUsersFileName);
-//		List<UsersData> list = ExcelRead.readUsersDataFromExcel("e:\\eclipse\\doc\\all_users_0912.xls");
+    public void sync2Ldap(List<UserDO> userlist) {
         int count = 1;
-        for (UsersData ud : list) {
-            String path = parsePath(ud.getPath());
-            System.out.println(path + ud.getUserName() + " " + count);
+        for (UserDO user : userlist) {
+            String path = parsePath(user.getOrgcode());
+            System.out.println(path + user.getUsername() + " " + count);
             this.createDepartment(path, 0);
-            boolean bAdd = this.addUser(path, LDAPHelper.Encrypt(ud.getUserMD5PWD(), "MD5"), ud.getUserName(), ud.getUserId());
+//            boolean badd = this.addUser()
+            boolean bAdd = this.addUser(path, LDAPHelper.Encrypt(user.getPassword(), "MD5"), user.getUsername(), user.getUserid() + "");
             if (!bAdd) break;
             count++;
         }
@@ -858,15 +894,15 @@ public class LDAPHelper {
     }
 
     // 测试
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
 //    	String URL = "ldap://192.168.180.247:389/";
-        String deMapFileName = "C:\\Users\\Administrator\\Downloads\\org20191227.xls";
-        String allUsersFileName = "C:\\Users\\Administrator\\Downloads\\user20191227.xls";
-        boolean bHAS_HEADER_FLAG = true;
+//        String deMapFileName = "C:\\Users\\Administrator\\Downloads\\org20191227.xls";
+//        String allUsersFileName = "C:\\Users\\Administrator\\Downloads\\user20191227.xls";
+//        boolean bHAS_HEADER_FLAG = true;
         boolean bFirst = true;
-
-        LDAPHelper ldap = new LDAPHelper(deMapFileName, allUsersFileName, bHAS_HEADER_FLAG);
-        LDAPConfig config = new LDAPConfig(new File("D:/ldap.properties"));
+        LDAPHelper ldap = new LDAPHelper();
+//        LDAPHelper ldap = new LDAPHelper(deMapFileName, allUsersFileName, bHAS_HEADER_FLAG);
+        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties"));
         ldap.LDAP_connect(config);
 
         if (bFirst) {//first
@@ -876,66 +912,17 @@ public class LDAPHelper {
 //		}
 //		else{//second
             System.out.println("second createTree");
-            ldap.createTreeByExcel();
+            String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
+            ldap.sync2Ldap(JDBCUtils.getUserList(sql));
         }
 
-        if (ldap.authenricate("test1", "123456789") == true) {
+        if (ldap.authenricate("test1", "123456789")) {
             System.out.println("该用户认证成功");
         } else {
             System.out.println("该用户认证失败");
         }
-
         ldap.closeContext();
 
-//删除用户
-//		if( ldap.deleteUser(user) ) {
-//			System.out.println(user+"用户删除成功");
-//			
-//		}else {
-//			System.out.println(user+"用户删除失败");
-//			
-//		}
 
-//添加用户
-//		if( ldap.addUser(cn,LDAPHelper.Encrypt(pwd,"SHA-1"),user,description) ) {
-//			System.out.println(user+"用户添加成功");
-//			
-//		}else {
-//			System.out.println(user+"用户添加失败");
-//			
-//		}
-
-//修改用户属性
-//	if( ldap.modifyInformation("uid=wangzhe","telephoneNumber","22222222222") ) {
-//		System.out.println(user+"用户属性修改成功");
-//		
-//	}else {
-//		System.out.println(user+"用户属性修改失败");
-//		
-//	}s
-
-//查找用户
-//		ldap.searchInformation("","","ou=赞同");
-//		try {
-//			ldap.Ldapbyuserinfo("A2073");
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (NamingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
-//密码校验
-//		try {
-//		LDAPHelper.verifySHA("{SHA}fCIvspJ9goryL1khNOiTJIBjfA0=","12345678");
-//	} catch (NoSuchAlgorithmException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
-//	System.out.println("加密后的密码"+LDAPHelper.Encrypt(pwd, "SHA-1"));
-//	System.exit(0);
-
-//		ldap.closeContext();
     }
 }

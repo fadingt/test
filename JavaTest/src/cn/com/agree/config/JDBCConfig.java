@@ -1,4 +1,4 @@
-package cn.com.agree.openldap;
+package cn.com.agree.config;
 
 import java.io.File;
 import java.io.IOException;

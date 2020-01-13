@@ -1,16 +1,18 @@
 package cn.com.agree.javatest;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+//import javax.persistence.Entity;
+//import javax.persistence.Table;
 import java.util.Date;
 
 /**
  * 目录服务连接信息
  * dq
  */
-@Entity
-@Table(name = "bo_ldap_info")//用户表
-public class LDAPConnectionInfo  extends  IdEntity{
+//@Entity
+//@Table(name = "bo_ldap_info")//用户表
+public class LDAPConnectionInfo
+//        extends  IdEntity
+{
 
     private static final long serialVersionUID = 7300555212960602097L;
 
@@ -151,7 +153,7 @@ public class LDAPConnectionInfo  extends  IdEntity{
         this.optTime = optTime;
     }
 
-    public LDAPConectionInfo(Integer userId, String serverName, String ip, Integer port, Integer version, String baseDN, Integer isAnonymousBind, String userDN, Integer isAppendBaseDN, String password, Date optTime) {
+/*    public LDAPConectionInfo(Integer userId, String serverName, String ip, Integer port, Integer version, String baseDN, Integer isAnonymousBind, String userDN, Integer isAppendBaseDN, String password, Date optTime) {
         this.userId = userId;
         this.serverName = serverName;
         this.ip = ip;
@@ -166,5 +168,5 @@ public class LDAPConnectionInfo  extends  IdEntity{
     }
 
     public LDAPConectionInfo() {
-    }
+    }*/
 }

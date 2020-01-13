@@ -1,11 +1,26 @@
 package cn.com.agree.openldap;
 
 public class UserDO {
-    public static void main(String[] args) {
-        UserDO user = new UserDO();
-        System.out.println(user.getPassword());
+    private int userid;
+    private String username;
+    private String usercode;
+    private String password;
+    private String orgcode;
+    private String orgname;
+
+    @Override
+    public String toString() {
+        return "UserDO{" +
+                "userid=" + userid +
+                ", username='" + username + '\'' +
+                ", usercode='" + usercode + '\'' +
+                ", password='" + password + '\'' +
+                ", orgcode='" + orgcode + '\'' +
+                ", orgname='" + orgname + '\'' +
+                '}';
     }
-    public UserDO(){
+
+    public UserDO() {
         this.password = "e10adc3949ba59abbe56e057f20f883e";//默认密码： 123456
     }
 
@@ -17,22 +32,14 @@ public class UserDO {
         this.orgname = orgname;
     }
 
-    @Override
-    public String toString() {
-        return "UserDO{" +
-                "username='" + username + '\'' +
-                ", usercode='" + usercode + '\'' +
-                ", password='" + password + '\'' +
-                ", orgcode='" + orgcode + '\'' +
-                ", orgname='" + orgname + '\'' +
-                '}';
+    public int getUserid() {
+        return userid;
     }
 
-    String username;
-    String usercode;
-    String password;
-    String orgcode;
-    String orgname;
+    public void setUserid(int userid) {
+        this.userid = userid;
+    }
+
     public String getUsername() {
         return username;
     }
