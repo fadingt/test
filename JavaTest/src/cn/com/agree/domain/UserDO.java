@@ -1,4 +1,4 @@
-package cn.com.agree.openldap;
+package cn.com.agree.domain;
 
 public class UserDO {
     private int userid;

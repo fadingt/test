@@ -1,8 +1,7 @@
-package cn.com.agree.openldap;
+package cn.com.agree.domain;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 /*
 * //É¾³ýÓÃ»§
 //		if( ldap.deleteUser(user) ) {
@@ -55,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 //		ldap.closeContext();
 * */
-class LDAPHelperTest {
+class LDAPUtilsTest {
 
     @Test
     void authenricate() {

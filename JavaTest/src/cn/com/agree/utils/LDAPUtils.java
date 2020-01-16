@@ -1,4 +1,4 @@
-package cn.com.agree.openldap;
+package cn.com.agree.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,22 +27,22 @@ import javax.naming.ldap.PagedResultsControl;
 import javax.naming.ldap.PagedResultsResponseControl;
 
 import cn.com.agree.config.LDAPConfig;
-import cn.com.agree.utils.JDBCUtils;
+import cn.com.agree.domain.UserDO;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
-public class LDAPHelper {
+public class LDAPUtils {
     private String BASEDN = null; // 根据自己情况进行修改
     private final String FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
     private LdapContext ctx = null;
     private final Control[] connCtls = null;
-    private Map<String, String> de_map = null;
+    private Map<String, String> de_map;
     private static int pageNo = 0;
 //    private String allUsersFileName = null;
 
-    public LDAPHelper() throws IOException, SQLException, ClassNotFoundException {
-        Map<String,String> de_map = new HashMap<String,String>();
+    public LDAPUtils() throws IOException, SQLException, ClassNotFoundException {
         String sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\org.sql"));
         this.de_map = JDBCUtils.getOrgMap(sql);
+        this.BASEDN = "dc=agree,dc=com";
     }
 
 /*    public LDAPHelper(String deMapFileName, String allUsersFileName, boolean bHAS_HEADER_FLAG) {
@@ -61,12 +61,11 @@ public class LDAPHelper {
         try {
             ctx = new InitialLdapContext(env, null);
             System.out.println("连接成功");
-
         } catch (javax.naming.AuthenticationException e) {
-            System.out.println("连接失败：");
+            System.out.println("连接失败:" + config);
             e.printStackTrace();
         } catch (Exception e) {
-            System.out.println("连接出错：");
+            System.out.println("连接出错");
             e.printStackTrace();
         }
 
@@ -92,7 +91,7 @@ public class LDAPHelper {
         }
     }
 
-    private void reConnect(LDAPConfig config) {
+    private void reConnectRoot(LDAPConfig config) {
         if (isConnect()) {
             try {
                 ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, config.getRoot());
@@ -107,20 +106,19 @@ public class LDAPHelper {
 
     private String getUserDN(String uid) {
         String userDN = "";
-        //LDAP_connect();
         if (!isConnect()) {
+            //TODO 自定义异常类
+            System.out.println("getUserDN()时 LDAP未连接");
             return userDN;
         }
-
         try {
             SearchControls constraints = new SearchControls();
             constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
             NamingEnumeration<SearchResult> en = ctx.search("", "uid=" + uid, constraints);
-
-            if (en == null || !en.hasMoreElements()) {
-                throw new RuntimeException("未找到该用户");
-            }
+/*            if (en == null || !en.hasMoreElements()) {
+                //TODO catch exception
+                System.out.println("未找到用户uid=" + uid);
+            }*/
             // maybe more than one element
             while (en != null && en.hasMoreElements()) {
                 Object obj = en.nextElement();
@@ -129,28 +127,24 @@ public class LDAPHelper {
                     userDN += si.getName();
                     userDN += "," + BASEDN;
                 } else {
-                    //System.out.println(obj);
+                    //todo
                 }
             }
-        } catch (Exception e) {
-            System.out.println("查找用户时产生异常。");
+        } catch (NamingException e) {
+            //TODO
             e.printStackTrace();
         }
-
         return userDN;
     }
 
     private String getDepartmentDN(String ouName, String pathParent) {
         String ouDN = "";
-        //LDAP_connect();
         if (!isConnect()) {
             return ouDN;
         }
-
         try {
             SearchControls constraints = new SearchControls();
             constraints.setSearchScope(SearchControls.ONELEVEL_SCOPE);
-
             if (pathParent != "")
                 pathParent = pathParent.substring(1);
             NamingEnumeration<SearchResult> en = ctx.search(pathParent, "ou=" + ouName, constraints);
@@ -191,7 +185,7 @@ public class LDAPHelper {
             ctx.reconnect(connCtls);
             System.out.println(userDN + " 验证通过");
             valide = true;
-            reConnect(new LDAPConfig(new File("D:/ldap.properties")));//切换回管理员用户
+            reConnectRoot(new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties")));//切换回管理员用户
         } catch (AuthenticationException e) {
             System.out.println(userDN + " 验证失败");
             System.out.println(e.toString());
@@ -217,7 +211,7 @@ public class LDAPHelper {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Exception in delete():" + e);
+            System.out.println("Exception in deleteUser()" + dn + ":\t" + e);
         }
         return false;
     }
@@ -247,13 +241,12 @@ public class LDAPHelper {
                     SearchResult si = (SearchResult) obj;
                     String dn = si.getName();
                     if (dn.indexOf(dir) != -1) {
-//                        System.out.println("dn:" + dn);
                         count++;
                         ctx.destroySubcontext(dn);
                     }
                 }
             }
-            System.out.println("deleteAllUsers count=" + count);
+            System.out.println("deleteAllUsers() count=" + count);
             return true;
 
         } catch (Exception e) {
@@ -271,8 +264,7 @@ public class LDAPHelper {
             String ou = "";
             SearchControls constraints = new SearchControls();
             constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            NamingEnumeration<SearchResult> en = ctx.search(
-                    "", "objectClass=organizationalUnit", constraints);
+            NamingEnumeration<SearchResult> en = ctx.search("", "objectClass=organizationalUnit", constraints);
             // maybe more than one element
             while (en != null && en.hasMoreElements()) {
                 Object obj = en.nextElement();
@@ -300,7 +292,7 @@ public class LDAPHelper {
             try {
                 ctx.destroySubcontext(dn);
                 iterator.remove();// 推荐使用
-                System.out.println("delete ou success! dn:" + dn);
+//                System.out.println("delete ou success! dn:" + dn);
             } catch (ContextNotEmptyException e) {
 //	            e.printStackTrace();
             } catch (NamingException e) {
@@ -359,13 +351,55 @@ public class LDAPHelper {
                 objclassSet.add("organizationalUnit");
                 attrsbu.put(objclassSet);
                 attrsbu.put("ou", ouName);
+//                attrsbu.put("userPassword", pwd);
+//                String description = ouName;
+                attrsbu.put("description", ouNo);
+                String ouDN = "ou=" + ouName + pathParent;
+                System.out.println("ouDN" + ouDN + "\tattrsbu");
+                ctx.createSubcontext(ouDN, attrsbu);
+            }
+            int newIndex = index + 1;
+            createDepartment(path, newIndex);
+            return true;
+
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean SyncDept2Ldap(String path, int index) {
+        if (!isConnect()) {
+            return false;
+        }
+        String pathParent = "";
+        String ouName = "";
+        String ouNo = "";
+        try {
+            String[] paths = path.split(",");
+            if (index >= paths.length) {
+                return true;
+            }
+
+            for (int i = paths.length - index; i < paths.length; i++) {
+                pathParent += ",ou=" + de_map.get(paths[i].substring(3));
+            }
+
+            ouNo = paths[paths.length - 1 - index].substring(3);
+            ouName = de_map.get(ouNo);
+
+            if (getDepartmentDN(ouName, pathParent) == "") {
+                BasicAttributes attrsbu = new BasicAttributes();
+                BasicAttribute objclassSet = new BasicAttribute("objectclass");
+                objclassSet.add("top");
+                objclassSet.add("organizationalUnit");
+                attrsbu.put(objclassSet);
+                attrsbu.put("ou", ouName);
                 //			attrsbu.put("userPassword", pwd);
 //				String description = ouName;
                 attrsbu.put("description", ouNo);
-
                 String ouDN = "ou=" + ouName + pathParent;
                 ctx.createSubcontext(ouDN, attrsbu);
-
             }
             int newIndex = index + 1;
             createDepartment(path, newIndex);
@@ -382,9 +416,7 @@ public class LDAPHelper {
             if (!isConnect()) {
                 return false;
             }
-            //LDAP_connect();
             if (getUserDN(uid) == "") {
-
                 BasicAttributes attrsbu = new BasicAttributes();
                 BasicAttribute objclassSet = new BasicAttribute("objectclass");
                 //objclassSet.add("employeeNumber");
@@ -446,7 +478,6 @@ public class LDAPHelper {
         } catch (NamingException ex) {
             ex.printStackTrace();
         }
-        //closeContext();
         return false;
     }
 
@@ -730,12 +761,12 @@ public class LDAPHelper {
             //System.out.println("md5:"+md.digest().toString());
 //             String md5=new BigInteger(1, md.digest()).toString(16);
 //             md5 = fillMD5(md5);
-            System.out.println("strSrc:" + strSrc);
+//            System.out.println("strSrc:" + strSrc);
 
             //strDes = Base64.encode(md.digest());
             strDes = Base64.encode(toBytes(strSrc));
 
-            System.out.println("strDes:" + strDes);
+//            System.out.println("strDes:" + strDes);
             if (encName.substring(0, 3) == "MD5") {
                 strDes = "{MD5}" + strDes;
             } else {
@@ -862,13 +893,14 @@ public class LDAPHelper {
         int count = 1;
         for (UserDO user : userlist) {
             String path = parsePath(user.getOrgcode());
-            System.out.println(path + user.getUsername() + " " + count);
             this.createDepartment(path, 0);
-//            boolean badd = this.addUser()
-            boolean bAdd = this.addUser(path, LDAPHelper.Encrypt(user.getPassword(), "MD5"), user.getUsername(), user.getUserid() + "");
+//            TODO this.addUser(USER user)
+            boolean bAdd = this.addUser(path, LDAPUtils.Encrypt(user.getPassword(), "MD5"), user.getUsername(), user.getUserid() + "");
             if (!bAdd) break;
+//            TODO LOG IF addUser unsecussessfully
             count++;
         }
+        System.out.println("sync2Ldap add user:"+count);
     }
 
     public String replacePath(String path) {//ou=0,ou=20000,ou=30833,ou=30835,ou=30843
@@ -877,7 +909,7 @@ public class LDAPHelper {
         for (int i = 0; i < paths.length; i++) {
             //System.out.println(paths[i]);
             ret = "ou=" + de_map.get(paths[i]) + "," + ret;
-//            ret = "ou="+paths[i]+","+ret;            
+//            ret = "ou="+paths[i]+","+ret;
         }
         return ret;
     }
@@ -894,35 +926,32 @@ public class LDAPHelper {
     }
 
     // 测试
-    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException, NamingException {
 //    	String URL = "ldap://192.168.180.247:389/";
 //        String deMapFileName = "C:\\Users\\Administrator\\Downloads\\org20191227.xls";
 //        String allUsersFileName = "C:\\Users\\Administrator\\Downloads\\user20191227.xls";
 //        boolean bHAS_HEADER_FLAG = true;
-        boolean bFirst = true;
-        LDAPHelper ldap = new LDAPHelper();
+//        boolean bFirst = true;
+        LDAPUtils ldap = new LDAPUtils();
 //        LDAPHelper ldap = new LDAPHelper(deMapFileName, allUsersFileName, bHAS_HEADER_FLAG);
         LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties"));
         ldap.LDAP_connect(config);
+//        System.out.println("first delete all");
+//        ldap.deleteAllUsers("ou=赞同");
+//        ldap.deleteAllDeps("ou=赞同");
+//        System.out.println("second createTree");
+//        String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
+//        ldap.sync2Ldap(JDBCUtils.getUserList(sql));
 
-        if (bFirst) {//first
-            System.out.println("first delete all");
-            ldap.deleteAllUsers("ou=赞同");
-            ldap.deleteAllDeps("ou=赞同");
-//		}
-//		else{//second
-            System.out.println("second createTree");
-            String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
-            ldap.sync2Ldap(JDBCUtils.getUserList(sql));
+        if (ldap.authenricate("-2", "agree123.com")) {
+            System.out.println("test1 认证成功");
         }
-
-        if (ldap.authenricate("test1", "123456789")) {
-            System.out.println("该用户认证成功");
-        } else {
-            System.out.println("该用户认证失败");
-        }
-        ldap.closeContext();
-
-
+//        if (ldap.authenricate("13787", "agree123")) {
+//            System.out.println("田田 认证成功");
+//        }
+//        if (ldap.authenricate("-2","")){
+//            System.out.println("-2");
+//        }
+//        ldap.closeContext();
     }
 }

@@ -1,7 +1,7 @@
 package cn.com.agree.utils;
 
 import cn.com.agree.config.JDBCConfig;
-import cn.com.agree.openldap.UserDO;
+import cn.com.agree.domain.UserDO;
 
 import java.io.*;
 import java.sql.*;
@@ -24,8 +24,8 @@ public class JDBCUtils {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        File file = null;
-        JDBCConfig config = null;
+        File file;
+        JDBCConfig config;
         try {
             file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\jdbc.properties");
             config = new JDBCConfig(file);
@@ -36,19 +36,19 @@ public class JDBCUtils {
             ResultSetMetaData meta = resultSet.getMetaData();
             int columnCnt = meta.getColumnCount();
             Map<String, String> orgMap = new HashMap<String, String>();
-            String key=null;
-            String val=null;
+            String key = null;
+            String val = null;
             while (resultSet.next()) {
                 for (int i = 1; i <= columnCnt; i++) {
                     switch (meta.getColumnName(i).toUpperCase()) {
-                        case "S_ORGNAME":
+                        case "S_ORGCODE":
                             key = (String) resultSet.getObject(i);
                             break;
                         case "S_NAME":
                             val = (String) resultSet.getObject(i);
                             break;
                     }
-                    orgMap.put(key,val);
+                    orgMap.put(key, val);
 
                 }
             }
@@ -71,7 +71,6 @@ public class JDBCUtils {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         File file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\jdbc.properties");
-//        File file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\localhostJDBC.properties");
         JDBCConfig config = null;
         try {
             config = new JDBCConfig(file);
@@ -80,8 +79,6 @@ public class JDBCUtils {
             connection = DriverManager.getConnection(config.getURL(), config.getUser(), config.getPassword());
 //            connection = DriverManager.getConnection("jdbc:mysql://192.9.200.123:3306/paas_aom?user=query&password=xitongkaifa_2019&useUnicode=true&characterEncoding=utf-8");
             preparedStatement = connection.prepareStatement(sql);
-
-
             resultSet = preparedStatement.executeQuery();
             ResultSetMetaData meta = resultSet.getMetaData();
             int columnCnt = meta.getColumnCount();
@@ -90,6 +87,9 @@ public class JDBCUtils {
                 UserDO user = new UserDO();
                 for (int i = 1; i <= columnCnt; i++) {
                     switch (meta.getColumnName(i)) {
+                        case "userid":
+                            user.setUserid(((Long)resultSet.getObject(i)).intValue());
+                            break;
                         case "username":
                             user.setUsername((String) resultSet.getObject(i));
                             break;
