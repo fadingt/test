@@ -1,6 +1,6 @@
 package cn.com.agree.domain;
 
-public class UserDO {
+public class User {
     private int userid;
     private String username;
     private String usercode;
@@ -20,11 +20,11 @@ public class UserDO {
                 '}';
     }
 
-    public UserDO() {
+    public User() {
         this.password = "e10adc3949ba59abbe56e057f20f883e";//默认密码： 123456
     }
 
-    public UserDO(String username, String usercode, String password, String orgcode, String orgname) {
+    public User(String username, String usercode, String password, String orgcode, String orgname) {
         this.username = username;
         this.usercode = usercode;
         this.password = password;
