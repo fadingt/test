@@ -9,12 +9,8 @@ public class JDBCConfig extends Config {
     private String user;
     private String password;
     private String port;
+    private String driverName;
 
-    public static void main(String[] args) throws IOException {
-        File file = new File("D:/jdbc.properties");
-        JDBCConfig config = new JDBCConfig(file);
-        System.out.println(config);
-    }
     @Override
     public String toString() {
         return "JDBCConfig{" +
@@ -32,6 +28,7 @@ public class JDBCConfig extends Config {
         this.user = JDBCProp.getProperty("user");
         this.password = JDBCProp.getProperty("password");
         this.port = JDBCProp.getProperty("port");
+        this.driverName = JDBCProp.getProperty("driverName");
         if (this.port == null) {
             this.port = "3306";
         }
@@ -67,6 +64,14 @@ public class JDBCConfig extends Config {
 
     public void setPort(String port) {
         this.port = port;
+    }
+
+    public String getDriverName() {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
     }
 
 

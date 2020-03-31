@@ -2,8 +2,6 @@ package cn.com.agree.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -27,13 +25,14 @@ import javax.naming.ldap.PagedResultsControl;
 import javax.naming.ldap.PagedResultsResponseControl;
 
 import cn.com.agree.config.LDAPConfig;
-import cn.com.agree.domain.UserDO;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import cn.com.agree.dao.UserDao;
+import cn.com.agree.dao.UserDaoImpl;
+import cn.com.agree.domain.User;
 
 public class LDAPUtils {
-    private String BASEDN = null; // 根据自己情况进行修改
+    private String BASEDN; // 根据自己情况进行修改
     private final String FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
-    private LdapContext ctx = null;
+    private LdapContext ctx;
     private final Control[] connCtls = null;
     private Map<String, String> de_map;
     private static int pageNo = 0;
@@ -45,13 +44,7 @@ public class LDAPUtils {
         this.BASEDN = "dc=agree,dc=com";
     }
 
-/*    public LDAPHelper(String deMapFileName, String allUsersFileName, boolean bHAS_HEADER_FLAG) {
-        ExcelRead.setHAS_HEADER_FLAG(bHAS_HEADER_FLAG);
-        getDeMapInfo(deMapFileName);
-        this.allUsersFileName = allUsersFileName;
-    }*/
-
-    private void LDAP_connect(LDAPConfig config) {
+    private void connect(LDAPConfig config) {
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, FACTORY);
         env.put(Context.PROVIDER_URL, config.getURL() + config.getBASEDN());
@@ -207,7 +200,7 @@ public class LDAPUtils {
      */
     public boolean deleteUser(String dn) {
         try {
-            ctx.destroySubcontext("uid=" + dn);
+            ctx.destroySubcontext(dn);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -411,81 +404,11 @@ public class LDAPUtils {
         return false;
     }
 
-    public boolean addUser(String path, String pwd, String cn, String uid) {
-        try {
-            if (!isConnect()) {
-                return false;
-            }
-            if (getUserDN(uid) == "") {
-                BasicAttributes attrsbu = new BasicAttributes();
-                BasicAttribute objclassSet = new BasicAttribute("objectclass");
-                //objclassSet.add("employeeNumber");
-                objclassSet.add("person");
-                objclassSet.add("top");
-                objclassSet.add("organizationalPerson");
-                objclassSet.add("inetOrgPerson");
-                attrsbu.put(objclassSet);
-                attrsbu.put("sn", cn);
-                attrsbu.put("cn", cn);
-                attrsbu.put("displayName", cn);
-                attrsbu.put("uid", uid);
-                attrsbu.put("userPassword", pwd);
-                attrsbu.put("description", uid);
-
-                //	        // int UF_ACCOUNTDISABLE = 0x0002;
-                //	        int UF_PASSWD_NOTREQD = 0x0020;
-                //	        // int UF_PASSWD_CANT_CHANGE = 0x0040;
-                //	        int UF_NORMAL_ACCOUNT = 0x0200;
-                //	        int UF_DONT_EXPIRE_PASSWD = 0x10000;
-                //	        // int UF_PASSWORD_EXPIRED = 0x800000;
-
-                //	        attrsbu.put("givenName", "aaa");
-                //	        attrsbu.put("displayName", "bbb");
-                //	        attrsbu.put("mail", "gaolei@agree.com.cn");
-                //	        attrsbu.put("userPrincipalName", "fancionwang@wilcom.com.cn");
-                //	        attrsbu.put("sAMAccountName", "N2073");
-                //	        attrsbu.put("employeeID", "N2073");
-                //	        attrsbu.put("msDS-SupportedEncryptionTypes", "0");
-
-                /** 设置传真 */
-                //	        attrsbu.put("facsimileTelephoneNumber", "gaolei.fax.wiocom.com.cn");
-                //	        /** 寻呼机 */
-                //	        attrsbu.put("pager", "****");
-                //	        /** ip电话 */
-                //	        attrsbu.put("ipPhone", "****");
-                //	        /** 家庭电话 */
-                //	        attrsbu.put("homePhone", "********");
-                //	        /** 移动电话 */
-                //	        attrsbu.put("telephoneNumber", "***********");
-
-                /** 设置账户信息 */
-                //	        attrsbu.put("userAccountControl",
-                //	                Integer.toString(UF_DONT_EXPIRE_PASSWD + UF_NORMAL_ACCOUNT + UF_PASSWD_NOTREQD));
-
-                String[] paths = path.split(",");
-                String pathParent = "";
-                for (int i = 0; i < paths.length; i++) {
-                    pathParent += ",ou=" + de_map.get(paths[i].substring(3));
-                }
-
-                String userDN = "uid=" + uid + pathParent;
-                ctx.createSubcontext(userDN, attrsbu);
-
-                return true;
-            } else {
-                return true;
-            }
-        } catch (NamingException ex) {
-            ex.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean addUser(UserDO user) {
-        String uid = user.getUserid() + "";
-        String pwd = user.getPassword();
-        String cn = "cn";
-        String path = user.getOrgcode();
+    public boolean addUser(User user) {
+        String uid = user.getUsercode();
+        String pwd = EncryptUtils.Encrypt(user.getPassword(), "MD5");
+        String cn = user.getUsername();
+        String path = new UserDaoImpl().parseOrgpath(user);
         try {
             if (!isConnect()) {
                 return false;
@@ -747,120 +670,6 @@ public class LDAPUtils {
         return success;
     }
 
-    public static String fillMD5(String md5) {
-        return md5.length() == 32 ? md5 : fillMD5("0" + md5);
-    }
-
-    public static String Encrypt(String strSrc, String encName) {
-        MessageDigest md = null;
-        String strDes = null;
-        byte[] bt = strSrc.getBytes();
-        try {
-            md = MessageDigest.getInstance(encName);
-//             md.update(bt);
-            //System.out.println("md5:"+md.digest().toString());
-//             String md5=new BigInteger(1, md.digest()).toString(16);
-//             md5 = fillMD5(md5);
-//            System.out.println("strSrc:" + strSrc);
-
-            //strDes = Base64.encode(md.digest());
-            strDes = Base64.encode(toBytes(strSrc));
-
-//            System.out.println("strDes:" + strDes);
-            if (encName.substring(0, 3) == "MD5") {
-                strDes = "{MD5}" + strDes;
-            } else {
-                strDes = "{SHA}" + strDes;
-            }
-            //strDes = bytes2Hex(md.digest()); // to HexString
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("签名失败！");
-            return null;
-        }
-        return strDes;
-    }
-
-    /**
-     * 将16进制字符串转换为byte[]
-     *
-     * @param str
-     * @return
-     */
-    public static byte[] toBytes(String str) {
-        if (str == null || str.trim().equals("")) {
-            return new byte[0];
-        }
-
-        byte[] bytes = new byte[str.length() / 2];
-        for (int i = 0; i < str.length() / 2; i++) {
-            String subStr = str.substring(i * 2, i * 2 + 2);
-            bytes[i] = (byte) Integer.parseInt(subStr, 16);
-        }
-
-        return bytes;
-    }
-
-    /**
-     * 将byte转为16进制
-     *
-     * @param bytes
-     * @return
-     */
-    private static String bytes2Hex(byte[] bytes) {
-        StringBuffer stringBuffer = new StringBuffer();
-        String temp = null;
-        for (int i = 0; i < bytes.length; i++) {
-            temp = Integer.toHexString(bytes[i] & 0xFF);
-            if (temp.length() == 1) {
-                //1得到一位的进行补0操作
-                stringBuffer.append("0");
-            }
-            stringBuffer.append(temp);
-        }
-        return stringBuffer.toString();
-    }
-
-    // 将输入用户和密码进行加密算法后验证
-    public static boolean verifySHA(String ldappw, String inputpw) throws NoSuchAlgorithmException {
-
-        // MessageDigest 提供了消息摘要算法，如 MD5 或 SHA，的功能，这里LDAP使用的是SHA-1
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-
-        // 取出加密字符
-        if (ldappw.startsWith("{SSHA}")) {
-            ldappw = ldappw.substring(6);
-        } else if (ldappw.startsWith("{SHA}")) {
-            ldappw = ldappw.substring(5);
-        }
-
-        // 解码BASE64
-        byte[] ldappwbyte = Base64.decode(ldappw);
-        byte[] shacode;
-        byte[] salt;
-
-        // 前20位是SHA-1加密段，20位后是最初加密时的随机明文
-        if (ldappwbyte.length <= 20) {
-            shacode = ldappwbyte;
-            salt = new byte[0];
-        } else {
-            shacode = new byte[20];
-            salt = new byte[ldappwbyte.length - 20];
-            System.arraycopy(ldappwbyte, 0, shacode, 0, 20);
-            System.arraycopy(ldappwbyte, 20, salt, 0, salt.length);
-        }
-
-        // 把用户输入的密码添加到摘要计算信息
-        md.update(inputpw.getBytes());
-        // 把随机明文添加到摘要计算信息
-        md.update(salt);
-
-        // 按SSHA把当前用户密码进行计算
-        byte[] inputpwbyte = md.digest();
-
-        // 返回校验结果
-        return MessageDigest.isEqual(shacode, inputpwbyte);
-    }
-
     /**
      * 重命名节点
      *
@@ -889,9 +698,9 @@ public class LDAPUtils {
 //		    }
     }*/
 
-    public void sync2Ldap(List<UserDO> userlist) {
+/*    public void sync2Ldap(List<User> userlist) {
         int count = 1;
-        for (UserDO user : userlist) {
+        for (User user : userlist) {
             String path = parsePath(user.getOrgcode());
             this.createDepartment(path, 0);
 //            TODO this.addUser(USER user)
@@ -901,7 +710,7 @@ public class LDAPUtils {
             count++;
         }
         System.out.println("sync2Ldap add user:"+count);
-    }
+    }*/
 
     public String replacePath(String path) {//ou=0,ou=20000,ou=30833,ou=30835,ou=30843
         String ret = "";
@@ -913,45 +722,67 @@ public class LDAPUtils {
         }
         return ret;
     }
-
-    public String parsePath(String path) {//|0|20000|30833|30835|30843|
-        String ret = "";
-        String[] paths = path.substring(1).split("\\|");
-        for (int i = 0; i < paths.length; i++) {
-            //System.out.println(paths[i]);
-//            ret = "ou="+de_map.get(paths[i])+","+ret;            
-            ret = "ou=" + paths[i] + "," + ret;
+    public boolean deleteUser(User user) {
+        String userDN;
+        if(user.getUsercode()== null || "".equals(user.getUsercode())){
+            return false;
         }
-        return ret;
+        userDN = (getUserDN(user.getUsercode()).split("," + BASEDN)[0]);
+        if("".equals(userDN)){
+            return false;
+        }
+        try {
+            ctx.destroySubcontext(userDN);
+            return true;
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    // 测试
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException, NamingException {
-//    	String URL = "ldap://192.168.180.247:389/";
-//        String deMapFileName = "C:\\Users\\Administrator\\Downloads\\org20191227.xls";
-//        String allUsersFileName = "C:\\Users\\Administrator\\Downloads\\user20191227.xls";
-//        boolean bHAS_HEADER_FLAG = true;
-//        boolean bFirst = true;
+
         LDAPUtils ldap = new LDAPUtils();
-//        LDAPHelper ldap = new LDAPHelper(deMapFileName, allUsersFileName, bHAS_HEADER_FLAG);
-        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties"));
-        ldap.LDAP_connect(config);
+//        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties"));
+        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap_produce.properties"));
+        ldap.connect(config);
 //        System.out.println("first delete all");
 //        ldap.deleteAllUsers("ou=赞同");
 //        ldap.deleteAllDeps("ou=赞同");
 //        System.out.println("second createTree");
-//        String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
-//        ldap.sync2Ldap(JDBCUtils.getUserList(sql));
+//        List<String> usercodeList = new ArrayList<String>();
+//        usercodeList.add("A4201");
+//        List<User> userlist = getUserListBYUsercode(usercodeList);
 
-        if (ldap.authenricate("-2", "agree123.com")) {
-            System.out.println("test1 认证成功");
+        UserDao userDao = new UserDaoImpl();
+        String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
+        String conditions = " WHERE  userid >= 617007";
+        sql = sql + conditions;
+        List<User> userlist = userDao.getUserList(sql);
+        updateUsers(ldap, userlist);
+
+//        String usercode = "A3449";
+//        if (ldap.authenricate(usercode, "agree123")) {
+//            System.out.println(usercode+":agree123认证成功");
+//        }
+//        if (ldap.authenricate(usercode, "888888")) {
+//            System.out.println(usercode+":888888认证成功");
+//        }
+        ldap.closeContext();
+    }
+
+    public static void updateUsers(LDAPUtils ldap, List<User> userlist) {
+        UserDao userDao = new UserDaoImpl();
+        int count = 0;
+        for (User user : userlist) {
+            ldap.deleteUser(user);
+            String path = userDao.parseOrgpath(user);
+            ldap.createDepartment(path, 0);
+            boolean bAdd = ldap.addUser(user);
+            if (!bAdd) break;
+//            TODO LOG IF addUser unsecussessfully
+            count++;
         }
-//        if (ldap.authenricate("13787", "agree123")) {
-//            System.out.println("田田 认证成功");
-//        }
-//        if (ldap.authenricate("-2","")){
-//            System.out.println("-2");
-//        }
-//        ldap.closeContext();
+        System.out.println("total add user:"+count);
     }
 }

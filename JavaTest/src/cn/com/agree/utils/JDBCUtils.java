@@ -1,7 +1,7 @@
 package cn.com.agree.utils;
 
 import cn.com.agree.config.JDBCConfig;
-import cn.com.agree.domain.UserDO;
+import cn.com.agree.domain.User;
 
 import java.io.*;
 import java.sql.*;
@@ -12,12 +12,24 @@ import java.util.Map;
 
 public class JDBCUtils {
     public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException {
+        List<String> usercodeList = new ArrayList<String>();
+        usercodeList.add("A11229");
+        usercodeList.add("A6853");
+        getUserListBYUsercode(usercodeList);
+//        System.out.println(LDAPUtils.Encrypt("0cd2258480af0aa900a256b6f065c450", "MD5"));
+    }
+
+    public static List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException, SQLException, ClassNotFoundException {
         String sql;
-        System.out.println(sql = makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql")));
-        List<UserDO> userlist = getUserList(sql);
-        for (UserDO user : userlist) {
-            System.out.println(user.toString());
+        StringBuilder condition = new StringBuilder();
+        condition.append(" WHERE USERCODE IN (");
+        for (String usercode:usercodeList) {
+            condition.append("'").append(usercode).append("',");
         }
+        condition.append("'')");
+        sql = makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"))+condition.toString();
+        System.out.println(sql);
+        return getUserList(sql);
     }
 
     public static Map<String, String> getOrgMap(String sql) throws SQLException, IOException, ClassNotFoundException {
@@ -49,7 +61,6 @@ public class JDBCUtils {
                             break;
                     }
                     orgMap.put(key, val);
-
                 }
             }
             return orgMap;
@@ -66,7 +77,7 @@ public class JDBCUtils {
         }
     }
 
-    public static List<UserDO> getUserList(String sql) throws SQLException, IOException, ClassNotFoundException {
+    public static List<User> getUserList(String sql) throws SQLException, IOException, ClassNotFoundException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -74,17 +85,16 @@ public class JDBCUtils {
         JDBCConfig config = null;
         try {
             config = new JDBCConfig(file);
-            Class.forName("com.mysql.jdbc.Driver");
-//            Class.forName("com.mysql.cj.jdbc.Driver");
+//            "com.mysql.jdbc.Driver";"com.mysql.cj.jdbc.Driver"
+            Class.forName(config.getDriverName());
             connection = DriverManager.getConnection(config.getURL(), config.getUser(), config.getPassword());
-//            connection = DriverManager.getConnection("jdbc:mysql://192.9.200.123:3306/paas_aom?user=query&password=xitongkaifa_2019&useUnicode=true&characterEncoding=utf-8");
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
             ResultSetMetaData meta = resultSet.getMetaData();
             int columnCnt = meta.getColumnCount();
-            List<UserDO> userList = new ArrayList<UserDO>();
+            List<User> userList = new ArrayList<User>();
             while (resultSet.next()) {
-                UserDO user = new UserDO();
+                User user = new User();
                 for (int i = 1; i <= columnCnt; i++) {
                     switch (meta.getColumnName(i)) {
                         case "userid":

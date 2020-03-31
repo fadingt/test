@@ -2,6 +2,11 @@ package cn.com.agree.domain;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 public class OrgTree {
@@ -12,7 +17,7 @@ public class OrgTree {
     }
 
     //TODO a model of orgtree from agree.com.cn/建立组织机构树模型
-    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
+    public static void main(String[] args) throws ParseException {
 //        String result = new LDAPHelper().parsePath("|0|20000|30833|30835|30843|");
 //        System.out.println(result);
 
@@ -28,10 +33,10 @@ public class OrgTree {
 //            System.out.println(iterator.next());
 //        }
 
+
     }
 
     public boolean parsePath(Map<String, String> orgMap) {
         return false;
     }
-
 }
