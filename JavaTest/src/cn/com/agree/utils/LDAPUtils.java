@@ -29,6 +29,8 @@ import cn.com.agree.dao.UserDao;
 import cn.com.agree.dao.UserDaoImpl;
 import cn.com.agree.domain.User;
 
+import static cn.com.agree.utils.JDBCUtils.getUserListBYUsercode;
+
 public class LDAPUtils {
     private String BASEDN; // 根据自己情况进行修改
     private final String FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
@@ -38,13 +40,22 @@ public class LDAPUtils {
     private static int pageNo = 0;
 //    private String allUsersFileName = null;
 
-    public LDAPUtils() throws IOException, SQLException, ClassNotFoundException {
-        String sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\org.sql"));
-        this.de_map = JDBCUtils.getOrgMap(sql);
-        this.BASEDN = "dc=agree,dc=com";
+    public LDAPUtils() {
+        String sql = null;
+        try {
+            sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\org.sql"));
+            this.de_map = JDBCUtils.getOrgMap(sql);
+            this.BASEDN = "dc=agree,dc=com";
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void connect(LDAPConfig config) {
+    public void connect(LDAPConfig config) {
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, FACTORY);
         env.put(Context.PROVIDER_URL, config.getURL() + config.getBASEDN());
@@ -65,14 +76,14 @@ public class LDAPUtils {
     }
 
 
-    private boolean isConnect() {
+    public boolean isConnect() {
         if (ctx == null) {
             return false;
         }
         return true;
     }
 
-    private void closeContext() {
+    public void closeContext() {
         if (ctx != null) {
             try {
                 ctx.close();
@@ -84,7 +95,7 @@ public class LDAPUtils {
         }
     }
 
-    private void reConnectRoot(LDAPConfig config) {
+    public void reConnectRoot(LDAPConfig config) {
         if (isConnect()) {
             try {
                 ctx.addToEnvironment(Context.SECURITY_PRINCIPAL, config.getRoot());
@@ -97,7 +108,7 @@ public class LDAPUtils {
         }
     }
 
-    private String getUserDN(String uid) {
+    public String getUserDN(String uid) {
         String userDN = "";
         if (!isConnect()) {
             //TODO 自定义异常类
@@ -202,9 +213,8 @@ public class LDAPUtils {
         try {
             ctx.destroySubcontext(dn);
             return true;
-        } catch (Exception e) {
+        } catch (NamingException e) {
             e.printStackTrace();
-            System.out.println("Exception in deleteUser()" + dn + ":\t" + e);
         }
         return false;
     }
@@ -746,28 +756,20 @@ public class LDAPUtils {
 //        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties"));
         LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap_produce.properties"));
         ldap.connect(config);
-//        System.out.println("first delete all");
 //        ldap.deleteAllUsers("ou=赞同");
 //        ldap.deleteAllDeps("ou=赞同");
-//        System.out.println("second createTree");
-//        List<String> usercodeList = new ArrayList<String>();
-//        usercodeList.add("A4201");
-//        List<User> userlist = getUserListBYUsercode(usercodeList);
+        List<String> usercodeList = new ArrayList<String>();
+        usercodeList.add("A7415");
+//        usercodeList.add("A2988");
+        List<User> userlist = getUserListBYUsercode(usercodeList);
 
-        UserDao userDao = new UserDaoImpl();
-        String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
-        String conditions = " WHERE  userid >= 617007";
-        sql = sql + conditions;
-        List<User> userlist = userDao.getUserList(sql);
+//        UserDao userDao = new UserDaoImpl();
+//        String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
+//        String conditions = " WHERE  userid >= 617007";
+//        sql = sql + conditions;
+//        List<User> userlist = userDao.getUserList(sql);
         updateUsers(ldap, userlist);
-
-//        String usercode = "A3449";
-//        if (ldap.authenricate(usercode, "agree123")) {
-//            System.out.println(usercode+":agree123认证成功");
-//        }
-//        if (ldap.authenricate(usercode, "888888")) {
-//            System.out.println(usercode+":888888认证成功");
-//        }
+//        ldap.authenricate("A11137", "agree123456");
         ldap.closeContext();
     }
 
