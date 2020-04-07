@@ -8,9 +8,10 @@ import java.util.Base64;
 
 public class EncryptUtils {
     public static void main(String[] args) {
-        System.out.println(Encrypt("1d15cda352d9c34947891c337c68a4e1","MD5"));
-        System.out.println(getMD5("1d15cda352d9c34947891c337c68a4e1"));
-        System.out.println(EncoderByMd5("1d15cda352d9c34947891c337c68a4e1"));
+        System.out.println(Encrypt("12cd005356dd68b29a0492100088b606","MD5"));
+//        System.out.println(Encrypt("1d15cda352d9c34947891c337c68a4e1","MD5"));
+//        System.out.println(getMD5("1d15cda352d9c34947891c337c68a4e1"));
+//        System.out.println(EncoderByMd5("1d15cda352d9c34947891c337c68a4e1"));
     }
     public static String getMD5(String str) {
         MessageDigest md;

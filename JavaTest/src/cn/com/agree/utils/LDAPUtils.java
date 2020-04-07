@@ -37,7 +37,7 @@ public class LDAPUtils {
     private LdapContext ctx;
     private final Control[] connCtls = null;
     private Map<String, String> de_map;
-    private static int pageNo = 0;
+//    private static int pageNo = 0;
 //    private String allUsersFileName = null;
 
     public LDAPUtils() {
@@ -398,7 +398,7 @@ public class LDAPUtils {
                 objclassSet.add("organizationalUnit");
                 attrsbu.put(objclassSet);
                 attrsbu.put("ou", ouName);
-                //			attrsbu.put("userPassword", pwd);
+//                			attrsbu.put("userPassword", pwd);
 //				String description = ouName;
                 attrsbu.put("description", ouNo);
                 String ouDN = "ou=" + ouName + pathParent;
@@ -414,6 +414,10 @@ public class LDAPUtils {
         return false;
     }
 
+    /**
+     * @param user
+     * @return true if success
+     */
     public boolean addUser(User user) {
         String uid = user.getUsercode();
         String pwd = EncryptUtils.Encrypt(user.getPassword(), "MD5");
@@ -546,7 +550,7 @@ public class LDAPUtils {
         }
     }
 
-    static byte[] parseControls(Control[] controls) throws NamingException {
+    /*static byte[] parseControls(Control[] controls) throws NamingException {
         byte[] cookie = null;
         if (controls != null) {
             for (int i = 0; i < controls.length; i++) {
@@ -563,7 +567,7 @@ public class LDAPUtils {
             }
         }
         return (cookie == null) ? new byte[0] : cookie;
-    }
+    }*/
 
     /**
      * 查询
@@ -571,7 +575,7 @@ public class LDAPUtils {
      * @throws IOException
      * @throws NamingException
      */
-    public void Ldapbyuserinfo(String userName) throws IOException, NamingException {
+/*    public void Ldapbyuserinfo(String userName) throws IOException, NamingException {
         // Create the search controls
         SearchControls searchCtls = new SearchControls();
         // Specify the search scope
@@ -662,7 +666,7 @@ public class LDAPUtils {
             e.printStackTrace();
             System.err.println("Throw Exception : " + e);
         }
-    }
+    }*/
 
     // 修改密码
     public boolean updateUserPassword(String uid, String pwd) {
@@ -732,13 +736,14 @@ public class LDAPUtils {
         }
         return ret;
     }
+
     public boolean deleteUser(User user) {
         String userDN;
-        if(user.getUsercode()== null || "".equals(user.getUsercode())){
+        if (user.getUsercode() == null || "".equals(user.getUsercode())) {
             return false;
         }
         userDN = (getUserDN(user.getUsercode()).split("," + BASEDN)[0]);
-        if("".equals(userDN)){
+        if ("".equals(userDN)) {
             return false;
         }
         try {
@@ -759,7 +764,7 @@ public class LDAPUtils {
 //        ldap.deleteAllUsers("ou=赞同");
 //        ldap.deleteAllDeps("ou=赞同");
         List<String> usercodeList = new ArrayList<String>();
-        usercodeList.add("A7415");
+        usercodeList.add("A4521");
 //        usercodeList.add("A2988");
         List<User> userlist = getUserListBYUsercode(usercodeList);
 
@@ -774,17 +779,27 @@ public class LDAPUtils {
     }
 
     public static void updateUsers(LDAPUtils ldap, List<User> userlist) {
-        UserDao userDao = new UserDaoImpl();
         int count = 0;
+        boolean result;
         for (User user : userlist) {
-            ldap.deleteUser(user);
-            String path = userDao.parseOrgpath(user);
-            ldap.createDepartment(path, 0);
-            boolean bAdd = ldap.addUser(user);
-            if (!bAdd) break;
-//            TODO LOG IF addUser unsecussessfully
-            count++;
+            result = updateUser(ldap, user);
+            if (!result) {
+                System.out.println("update " + user.getUsername() + " failed!");
+            } else {
+                count++;
+            }
         }
-        System.out.println("total add user:"+count);
+        System.out.println("total add user:" + count);
+    }
+
+    public static boolean updateUser(LDAPUtils ldap, User user) {
+        if(user.getOrgcode() == null || user.getUsercode() == null){
+            return false;
+        }
+        UserDao userDao = new UserDaoImpl();
+        ldap.deleteUser(user);
+        String path = userDao.parseOrgpath(user);
+        ldap.createDepartment(path, 0);
+        return ldap.addUser(user);
     }
 }

@@ -17,32 +17,40 @@ import java.util.List;
 
 import static cn.com.agree.utils.JDBCUtils.getUserListBYUsercode;
 
-@WebServlet(name = "LdapUserManageServlet", urlPatterns = "/JavaTest_war_exploded/updateLdapUser")
+@WebServlet(name = "LdapUserManageServlet", urlPatterns = "/updateLdapUser")
 public class LdapUserManageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         doGet(request,response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-//        request.getQueryString();
         LDAPUtils ldap = new LDAPUtils();
         File parent = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource");
 //        String child = "ldap.properties";
         String child = "ldap_produce.properties";
         LDAPConfig config = new LDAPConfig(new File(parent,child));
         ldap.connect(config);
-        System.out.println(request.getQueryString());
-        List<String> usercodeList = new ArrayList<String>();
-        usercodeList.add("A6853");
-        List<User> userlist = null;
-        try {
-            userlist = getUserListBYUsercode(usercodeList);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        if(request.getQueryString() != null) {
+            System.out.println(request.getQueryString());
+            Object object = request.getAttribute("usercode");
+            System.out.println(object);
+        }else{
+            System.out.println("request is null");
         }
-        ldap.updateUsers(ldap, userlist);
+//        List<String> usercodeList = new ArrayList<String>();
+//        usercodeList.add("A6853");
+//        List<User> userlist = null;
+//        try {
+//            userlist = getUserListBYUsercode(usercodeList);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        ldap.updateUsers(ldap, userlist);
+        User user = new User();
+        user.setOrgcode("A6853");
+        ldap.updateUser(ldap,user);
         ldap.closeContext();
         request.getRequestDispatcher("/result.jsp").forward(request,response);
     }
