@@ -21,42 +21,33 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
-import javax.naming.ldap.PagedResultsControl;
-import javax.naming.ldap.PagedResultsResponseControl;
 
 import cn.com.agree.config.LDAPConfig;
 import cn.com.agree.dao.UserDao;
 import cn.com.agree.dao.UserDaoImpl;
 import cn.com.agree.domain.User;
 
-import static cn.com.agree.utils.JDBCUtils.getUserListBYUsercode;
 
 public class LDAPUtils {
-    private String BASEDN; // 根据自己情况进行修改
-    private final String FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
+    private String BASEDN; // 根据自己情况进行修改 dc=agree,dc=com
     private LdapContext ctx;
     private final Control[] connCtls = null;
     private Map<String, String> de_map;
-//    private static int pageNo = 0;
-//    private String allUsersFileName = null;
 
     public LDAPUtils() {
-        String sql = null;
+        String sql;
         try {
             sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\org.sql"));
             this.de_map = JDBCUtils.getOrgMap(sql);
             this.BASEDN = "dc=agree,dc=com";
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void connect(LDAPConfig config) {
-        Hashtable<String, String> env = new Hashtable<String, String>();
+        Hashtable<String, String> env = new Hashtable<>();
+        String FACTORY = "com.sun.jndi.ldap.LdapCtxFactory";
         env.put(Context.INITIAL_CONTEXT_FACTORY, FACTORY);
         env.put(Context.PROVIDER_URL, config.getURL() + config.getBASEDN());
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
@@ -75,12 +66,8 @@ public class LDAPUtils {
 
     }
 
-
     public boolean isConnect() {
-        if (ctx == null) {
-            return false;
-        }
-        return true;
+        return ctx != null;
     }
 
     public void closeContext() {
@@ -109,11 +96,11 @@ public class LDAPUtils {
     }
 
     public String getUserDN(String uid) {
-        String userDN = "";
+        StringBuilder userDN = new StringBuilder();
         if (!isConnect()) {
             //TODO 自定义异常类
             System.out.println("getUserDN()时 LDAP未连接");
-            return userDN;
+            return userDN.toString();
         }
         try {
             SearchControls constraints = new SearchControls();
@@ -125,45 +112,42 @@ public class LDAPUtils {
             }*/
             // maybe more than one element
             while (en != null && en.hasMoreElements()) {
-                Object obj = en.nextElement();
-                if (obj instanceof SearchResult) {
-                    SearchResult si = (SearchResult) obj;
-                    userDN += si.getName();
-                    userDN += "," + BASEDN;
+                SearchResult searchResult = en.nextElement();
+                if (searchResult != null) {
+                    userDN.append(searchResult.getName()).append(",").append(BASEDN);
                 } else {
                     //todo
                 }
             }
         } catch (NamingException e) {
-            //TODO
             e.printStackTrace();
         }
-        return userDN;
+        return userDN.toString();
     }
 
     private String getDepartmentDN(String ouName, String pathParent) {
-        String ouDN = "";
+        StringBuilder ouDN = new StringBuilder();
         if (!isConnect()) {
-            return ouDN;
+            return ouDN.toString();
         }
         try {
             SearchControls constraints = new SearchControls();
             constraints.setSearchScope(SearchControls.ONELEVEL_SCOPE);
-            if (pathParent != "")
+            if (!pathParent.equals(""))
                 pathParent = pathParent.substring(1);
             NamingEnumeration<SearchResult> en = ctx.search(pathParent, "ou=" + ouName, constraints);
 
             if (en == null || !en.hasMoreElements()) {
-                //System.out.println("未找到该用户");
+//                todo
+                System.out.println("未找到该用户");
             }
             // maybe more than one element
             while (en != null && en.hasMoreElements()) {
-                Object obj = en.nextElement();
-                if (obj instanceof SearchResult) {
-                    SearchResult si = (SearchResult) obj;
-                    ouDN += si.getName();
-                    ouDN += "," + BASEDN;
+                SearchResult searchResult = en.nextElement();
+                if (searchResult != null) {
+                    ouDN.append(searchResult.getName()).append(",").append(BASEDN);
                 } else {
+//                    todo
                     //System.out.println(obj);
                 }
             }
@@ -172,7 +156,7 @@ public class LDAPUtils {
             e.printStackTrace();
         }
 
-        return ouDN;
+        return ouDN.toString();
     }
 
     public boolean authenricate(String UID, String password) {
@@ -207,7 +191,7 @@ public class LDAPUtils {
     /**
      * 删除用户
      *
-     * @param dn
+     * @param dn user distinctName without BASEDN eg:uid=A6853,ou=xx,ou=xx，ou=赞同
      */
     public boolean deleteUser(String dn) {
         try {
@@ -239,11 +223,10 @@ public class LDAPUtils {
             int count = 0;
             // maybe more than one element
             while (en != null && en.hasMoreElements()) {
-                Object obj = en.nextElement();
-                if (obj instanceof SearchResult) {
-                    SearchResult si = (SearchResult) obj;
-                    String dn = si.getName();
-                    if (dn.indexOf(dir) != -1) {
+                SearchResult obj = en.nextElement();
+                if (obj != null) {
+                    String dn = obj.getName();
+                    if (dn.contains(dir)) {
                         count++;
                         ctx.destroySubcontext(dn);
                     }
@@ -262,7 +245,7 @@ public class LDAPUtils {
 
 
     public ArrayList<String> getOUNames(String dir) {
-        ArrayList<String> deps = new ArrayList<String>();
+        ArrayList<String> deps = new ArrayList<>();
         try {
             String ou = "";
             SearchControls constraints = new SearchControls();
@@ -270,11 +253,10 @@ public class LDAPUtils {
             NamingEnumeration<SearchResult> en = ctx.search("", "objectClass=organizationalUnit", constraints);
             // maybe more than one element
             while (en != null && en.hasMoreElements()) {
-                Object obj = en.nextElement();
-                if (obj instanceof SearchResult) {
-                    SearchResult si = (SearchResult) obj;
-                    String dn = si.getName();
-                    if (dn.indexOf(dir) != -1) {
+                SearchResult obj = en.nextElement();
+                if (obj != null) {
+                    String dn = obj.getName();
+                    if (dn.contains(dir)) {
 //						System.out.println("dn:"+dn);
                         deps.add(dn);
                     }
@@ -331,9 +313,9 @@ public class LDAPUtils {
         if (!isConnect()) {
             return false;
         }
-        String pathParent = "";
-        String ouName = "";
-        String ouNo = "";
+        StringBuilder pathParent = new StringBuilder();
+        String ouName;
+        String ouNo;
         try {
             String[] paths = path.split(",");
             if (index >= paths.length) {
@@ -341,13 +323,13 @@ public class LDAPUtils {
             }
 
             for (int i = paths.length - index; i < paths.length; i++) {
-                pathParent += ",ou=" + de_map.get(paths[i].substring(3));
+                pathParent.append(",ou=").append(de_map.get(paths[i].substring(3)));
             }
 
             ouNo = paths[paths.length - 1 - index].substring(3);
             ouName = de_map.get(ouNo);
 
-            if (getDepartmentDN(ouName, pathParent) == "") {
+            if (getDepartmentDN(ouName, pathParent.toString()).equals("")) {
                 BasicAttributes attrsbu = new BasicAttributes();
                 BasicAttribute objclassSet = new BasicAttribute("objectclass");
                 objclassSet.add("top");
@@ -375,9 +357,9 @@ public class LDAPUtils {
         if (!isConnect()) {
             return false;
         }
-        String pathParent = "";
-        String ouName = "";
-        String ouNo = "";
+        StringBuilder pathParent = new StringBuilder();
+        String ouName;
+        String ouNo;
         try {
             String[] paths = path.split(",");
             if (index >= paths.length) {
@@ -385,13 +367,13 @@ public class LDAPUtils {
             }
 
             for (int i = paths.length - index; i < paths.length; i++) {
-                pathParent += ",ou=" + de_map.get(paths[i].substring(3));
+                pathParent.append(",ou=").append(de_map.get(paths[i].substring(3)));
             }
 
             ouNo = paths[paths.length - 1 - index].substring(3);
             ouName = de_map.get(ouNo);
 
-            if (getDepartmentDN(ouName, pathParent) == "") {
+            if (getDepartmentDN(ouName, pathParent.toString()).equals("")) {
                 BasicAttributes attrsbu = new BasicAttributes();
                 BasicAttribute objclassSet = new BasicAttribute("objectclass");
                 objclassSet.add("top");
@@ -419,15 +401,25 @@ public class LDAPUtils {
      * @return true if success
      */
     public boolean addUser(User user) {
+        if (user.getUsercode() == null) {
+            System.out.println("usercode is null");
+            return false;
+        } else if (user.getPassword() == null) {
+            System.out.println("user password is null");
+            return false;
+        } else if (user.getOrgcode() == null) {
+            System.out.println("user orgcode is null");
+            return false;
+        }
         String uid = user.getUsercode();
         String pwd = EncryptUtils.Encrypt(user.getPassword(), "MD5");
         String cn = user.getUsername();
-        String path = new UserDaoImpl().parseOrgpath(user);
+        String path = new UserDaoImpl().parseOrgPath(user);
         try {
             if (!isConnect()) {
                 return false;
             }
-            if (getUserDN(uid) == "") {
+            if (getUserDN(uid).equals("")) {
                 BasicAttributes attrsbu = new BasicAttributes();
                 BasicAttribute objclassSet = new BasicAttribute("objectclass");
                 objclassSet.add("person");
@@ -442,9 +434,9 @@ public class LDAPUtils {
                 attrsbu.put("userPassword", pwd);
                 attrsbu.put("description", uid);
                 String[] paths = path.split(",");
-                String pathParent = "";
-                for (int i = 0; i < paths.length; i++) {
-                    pathParent += ",ou=" + de_map.get(paths[i].substring(3));
+                StringBuilder pathParent = new StringBuilder();
+                for (String s : paths) {
+                    pathParent.append(",ou=").append(de_map.get(s.substring(3)));
                 }
 
                 String userDN = "uid=" + uid + pathParent;
@@ -452,6 +444,7 @@ public class LDAPUtils {
 
                 return true;
             } else {
+                System.out.println("user exists");
                 return true;
             }
         } catch (NamingException ex) {
@@ -460,11 +453,6 @@ public class LDAPUtils {
         return false;
     }
 
-    /**
-     * 修改
-     *
-     * @return
-     */
     public boolean modifyInformation(String dn, String attrName, String attrValue) {
         try {
             System.out.println("updating...\n");
@@ -506,7 +494,7 @@ public class LDAPUtils {
         }
 
         //sc.setReturningAttributes(null); // 不定制属性，将返回所有的属性集
-        NamingEnumeration<SearchResult> ne = null;
+        NamingEnumeration<SearchResult> ne;
         try {
             ne = ctx.search(base, filter, sc);
             // Use the NamingEnumeration object to cycle through
@@ -515,7 +503,7 @@ public class LDAPUtils {
             while (ne.hasMore()) {
                 index++;
                 System.out.println("index=" + index);
-                SearchResult sr = (SearchResult) ne.next();
+                SearchResult sr = ne.next();
                 String name = sr.getName();
                 if (base != null && !base.equals("")) {
                     System.out.println("entry: " + name + "," + base);
@@ -524,9 +512,9 @@ public class LDAPUtils {
                 }
 
                 Attributes at = sr.getAttributes();
-                NamingEnumeration ane = at.getAll();
+                NamingEnumeration<? extends Attribute> ane = at.getAll();
                 while (ane.hasMore()) {
-                    Attribute attr = (Attribute) ane.next();
+                    Attribute attr = ane.next();
                     String attrType = attr.getID();
                     NamingEnumeration values = attr.getAll();
                     Vector vals = new Vector();
@@ -535,11 +523,9 @@ public class LDAPUtils {
                     while (values.hasMore()) {
                         Object oneVal = values.nextElement();
                         if (oneVal instanceof String) {
-                            System.out.println(attrType + ": "
-                                    + (String) oneVal);
+                            System.out.println(attrType + ": " + oneVal);
                         } else {
-                            System.out.println(attrType + ": "
-                                    + new String((byte[]) oneVal));
+                            System.out.println(attrType + ": " + new String((byte[]) oneVal));
                         }
                     }
                 }
@@ -549,124 +535,6 @@ public class LDAPUtils {
             nex.printStackTrace();
         }
     }
-
-    /*static byte[] parseControls(Control[] controls) throws NamingException {
-        byte[] cookie = null;
-        if (controls != null) {
-            for (int i = 0; i < controls.length; i++) {
-                if (controls[i] instanceof PagedResultsResponseControl) {
-
-                    PagedResultsResponseControl prrc =
-                            (PagedResultsResponseControl) controls[i];
-
-                    cookie = prrc.getCookie();
-
-                    System.out.println(">>Next Page \n" + pageNo++);
-                }
-
-            }
-        }
-        return (cookie == null) ? new byte[0] : cookie;
-    }*/
-
-    /**
-     * 查询
-     *
-     * @throws IOException
-     * @throws NamingException
-     */
-/*    public void Ldapbyuserinfo(String userName) throws IOException, NamingException {
-        // Create the search controls
-        SearchControls searchCtls = new SearchControls();
-        // Specify the search scope
-        searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        // specify the LDAP search filter
-//        String searchFilter = "uid=" + userName;
-        String searchFilter = "(objectClass=*)";
-        // Specify the Base for the search 搜索域节点
-        String searchBase = "";
-        int totalResults = 0;
-//        String returnedAtts[] = { "url", "whenChanged", "employeeID", "name",
-//                "userPrincipalName", "physicalDeliveryOfficeName",
-//                "departmentNumber", "telephoneNumber", "homePhone", "mobile",
-//                "department", "sAMAccountName", "whenChanged", "mail" }; // 定制返回属性
-        String returnedAtts[] = {"displayName", "description"}; // 定制返回属性
-
-        searchCtls.setReturningAttributes(returnedAtts); // 设置返回属性集
-
-//         searchCtls.setReturningAttributes(null); // 不定制属性，将返回所有的属性集
-        searchCtls.setCountLimit(10000);
-//         System.out.println("searchCtls.getCountLimit()="+searchCtls.getCountLimit());
-
-        int index = 0;
-        int pageSize = 10;
-        byte[] cookie = null;
-        //Request the paged results control
-        Control[] ctls = new Control[]{new PagedResultsControl(pageSize, Control.CRITICAL)};
-        ctx.setRequestControls(ctls);
-
-        try {
-            do {
-                NamingEnumeration<SearchResult> answer = ctx.search(searchBase, searchFilter,
-                        searchCtls);
-                if (answer == null || answer.equals(null)) {
-                    System.out.println("answer is null");
-                } else {
-                    System.out.println("answer not null");
-                }
-                while (answer.hasMoreElements()) {
-                    SearchResult sr = (SearchResult) answer.next();
-                    System.out
-                            .println("************************************************");
-                    System.out.println("index=" + index++);
-                    System.out.println("getname=" + sr.getName());
-                    Attributes Attrs = sr.getAttributes();
-                    if (Attrs != null) {
-                        try {
-
-                            for (NamingEnumeration ne = Attrs.getAll(); ne
-                                    .hasMore(); ) {
-                                Attribute Attr = (Attribute) ne.next();
-                                //                            System.out.print(""
-                                //                                    + Attr.getID().toString());
-                                // 读取属性值
-                                for (NamingEnumeration e = Attr.getAll(); e
-                                        .hasMore(); totalResults++) {
-                                    String user = e.next().toString(); // 接受循环遍历读取的userPrincipalName用户属性
-                                    //                                System.out.println(user);
-                                }
-                                // System.out.println(" ---------------");
-                                // // 读取属性值
-                                // Enumeration values = Attr.getAll();
-                                // if (values != null) { // 迭代
-                                // while (values.hasMoreElements()) {
-                                // System.out.println(" 2AttributeValues="
-                                // + values.nextElement());
-                                // }
-                                // }
-                                // System.out.println(" ---------------");
-                            }
-                        } catch (NamingException e) {
-                            System.err.println("Throw Exception : " + e);
-                        }
-                    }
-                }
-                // examine the response controls
-
-                cookie = parseControls(ctx.getResponseControls());
-                // pass the cookie back to the server for the next page
-
-                ctx.setRequestControls(new Control[]{new
-                        PagedResultsControl(pageSize, cookie, Control.CRITICAL)});
-
-            } while ((cookie != null) && (cookie.length != 0));
-
-            System.out.println("Number: " + totalResults);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Throw Exception : " + e);
-        }
-    }*/
 
     // 修改密码
     public boolean updateUserPassword(String uid, String pwd) {
@@ -689,7 +557,7 @@ public class LDAPUtils {
      *
      * @param oldDN
      * @param newDN
-     * @return
+     * @return true if success
      */
     public boolean renameEntry(String oldDN, String newDN) {
         try {
@@ -701,40 +569,13 @@ public class LDAPUtils {
         }
     }
 
-/*    private void getDeMapInfo(String fileName) {
-        if (de_map == null)
-            de_map = ExcelRead.readDEMapFromExcel(fileName);
-//    		de_map = ExcelRead.readDEMapFromExcel("e:\\eclipse\\doc\\bumen_0903.xls");
-//		    de_map_reverse = new HashMap<>();
-//    		for(Entry<String, String> en : de_map.entrySet()){
-////		    	System.out.println(en.getKey()+ "=" + en.getValue());
-//		    	de_map_reverse.put(en.getValue(), en.getKey());
-//		    }
-    }*/
-
-/*    public void sync2Ldap(List<User> userlist) {
-        int count = 1;
-        for (User user : userlist) {
-            String path = parsePath(user.getOrgcode());
-            this.createDepartment(path, 0);
-//            TODO this.addUser(USER user)
-            boolean bAdd = this.addUser(path, LDAPUtils.Encrypt(user.getPassword(), "MD5"), user.getUsername(), user.getUserid() + "");
-            if (!bAdd) break;
-//            TODO LOG IF addUser unsecussessfully
-            count++;
-        }
-        System.out.println("sync2Ldap add user:"+count);
-    }*/
-
     public String replacePath(String path) {//ou=0,ou=20000,ou=30833,ou=30835,ou=30843
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         String[] paths = path.substring(1).split("\\|");
-        for (int i = 0; i < paths.length; i++) {
-            //System.out.println(paths[i]);
-            ret = "ou=" + de_map.get(paths[i]) + "," + ret;
-//            ret = "ou="+paths[i]+","+ret;
+        for (String s : paths) {
+            ret.insert(0, "ou=" + de_map.get(s) + ",");
         }
-        return ret;
+        return ret.toString();
     }
 
     public boolean deleteUser(User user) {
@@ -755,30 +596,31 @@ public class LDAPUtils {
         return false;
     }
 
-    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException, NamingException {
-
+    public static void main(String[] args) throws IOException, SQLException {
+        UserDao userDao = new UserDaoImpl();
         LDAPUtils ldap = new LDAPUtils();
 //        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties"));
         LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap_produce.properties"));
         ldap.connect(config);
 //        ldap.deleteAllUsers("ou=赞同");
 //        ldap.deleteAllDeps("ou=赞同");
-        List<String> usercodeList = new ArrayList<String>();
+        List<String> usercodeList = new ArrayList<>();
         usercodeList.add("A4521");
 //        usercodeList.add("A2988");
-        List<User> userlist = getUserListBYUsercode(usercodeList);
+        List<User> userlist;
+        userlist = userDao.getUserListBYUsercode(usercodeList);
 
-//        UserDao userDao = new UserDaoImpl();
 //        String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
 //        String conditions = " WHERE  userid >= 617007";
 //        sql = sql + conditions;
-//        List<User> userlist = userDao.getUserList(sql);
-        updateUsers(ldap, userlist);
-//        ldap.authenricate("A11137", "agree123456");
+//        userlist = userDao.getUserList(sql);
+
+        ldap.updateUsers(ldap, userlist);
+        ldap.authenricate("A6853", "agree123");
         ldap.closeContext();
     }
 
-    public static void updateUsers(LDAPUtils ldap, List<User> userlist) {
+    public void updateUsers(LDAPUtils ldap, List<User> userlist) {
         int count = 0;
         boolean result;
         for (User user : userlist) {
@@ -789,16 +631,16 @@ public class LDAPUtils {
                 count++;
             }
         }
-        System.out.println("total add user:" + count);
+        System.out.println("total update " + count + " users");
     }
 
-    public static boolean updateUser(LDAPUtils ldap, User user) {
-        if(user.getOrgcode() == null || user.getUsercode() == null){
+    public boolean updateUser(LDAPUtils ldap, User user) {
+        if (user.getOrgcode() == null || user.getUsercode() == null) {
             return false;
         }
         UserDao userDao = new UserDaoImpl();
         ldap.deleteUser(user);
-        String path = userDao.parseOrgpath(user);
+        String path = userDao.parseOrgPath(user);
         ldap.createDepartment(path, 0);
         return ldap.addUser(user);
     }
