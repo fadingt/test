@@ -33,12 +33,13 @@ public class LDAPUtils {
     private LdapContext ctx;
     private final Control[] connCtls = null;
     private Map<String, String> de_map;
+    private UserDao userDao = new UserDaoImpl();
 
     public LDAPUtils() {
         String sql;
         try {
             sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\org.sql"));
-            this.de_map = JDBCUtils.getOrgMap(sql);
+            this.de_map = userDao.getOrgMap(sql);
             this.BASEDN = "dc=agree,dc=com";
         } catch (IOException | ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -415,10 +416,10 @@ public class LDAPUtils {
         String pwd = EncryptUtils.Encrypt(user.getPassword(), "MD5");
         String cn = user.getUsername();
         String path = new UserDaoImpl().parseOrgPath(user);
+        if (!isConnect()) {
+            return false;
+        }
         try {
-            if (!isConnect()) {
-                return false;
-            }
             if (getUserDN(uid).equals("")) {
                 BasicAttributes attrsbu = new BasicAttributes();
                 BasicAttribute objclassSet = new BasicAttribute("objectclass");
@@ -438,14 +439,13 @@ public class LDAPUtils {
                 for (String s : paths) {
                     pathParent.append(",ou=").append(de_map.get(s.substring(3)));
                 }
-
                 String userDN = "uid=" + uid + pathParent;
                 ctx.createSubcontext(userDN, attrsbu);
 
                 return true;
             } else {
-                System.out.println("user exists");
-                return true;
+                System.out.println(user.getUsername()+"-"+user.getUsercode()+" exists");
+                return false;
             }
         } catch (NamingException ex) {
             ex.printStackTrace();
@@ -480,7 +480,10 @@ public class LDAPUtils {
 
     /**
      * @param base   ：根节点(在这里是"dc=agree,dc=com")
-     * @param scope  ：搜索范围,分为"base"(本节点),"one"(单层),""(遍历)
+     * @param scope  ：搜索范围:<br>
+     *               0本节点: {@link SearchControls#OBJECT_SCOPE}<br>
+     *               1单层:{@link SearchControls#ONELEVEL_SCOPE}<br>
+     *               2遍历:{@link SearchControls#SUBTREE_SCOPE}
      * @param filter ：指定子节点(格式为"(objectclass=*)",*是指全部，你也可以指定某一特定类型的树节点)
      */
     public void searchInformation(String base, String scope, String filter) {
@@ -497,8 +500,7 @@ public class LDAPUtils {
         NamingEnumeration<SearchResult> ne;
         try {
             ne = ctx.search(base, filter, sc);
-            // Use the NamingEnumeration object to cycle through
-            // the result set.
+//            Use the NamingEnumeration object to cycle through the result set.
             int index = 0;
             while (ne.hasMore()) {
                 index++;
@@ -511,12 +513,12 @@ public class LDAPUtils {
                     System.out.println("entry: " + name);
                 }
 
-                Attributes at = sr.getAttributes();
-                NamingEnumeration<? extends Attribute> ane = at.getAll();
+                Attributes attributes = sr.getAttributes();
+                NamingEnumeration<? extends Attribute> ane = attributes.getAll();
                 while (ane.hasMore()) {
-                    Attribute attr = ane.next();
-                    String attrType = attr.getID();
-                    NamingEnumeration values = attr.getAll();
+                    Attribute attribute = ane.next();
+                    String attrType = attribute.getID();
+                    NamingEnumeration values = attribute.getAll();
                     Vector vals = new Vector();
                     // Another NamingEnumeration object, this time
                     // to iterate through attribute values.
@@ -530,9 +532,9 @@ public class LDAPUtils {
                     }
                 }
             }
-        } catch (Exception nex) {
-            System.err.println("Error: " + nex.getMessage());
-            nex.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -599,24 +601,23 @@ public class LDAPUtils {
     public static void main(String[] args) throws IOException, SQLException {
         UserDao userDao = new UserDaoImpl();
         LDAPUtils ldap = new LDAPUtils();
-//        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties"));
-        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap_produce.properties"));
+        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap.properties"));
+//        LDAPConfig config = new LDAPConfig(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\ldap_produce.properties"));
         ldap.connect(config);
 //        ldap.deleteAllUsers("ou=赞同");
 //        ldap.deleteAllDeps("ou=赞同");
-        List<String> usercodeList = new ArrayList<>();
-        usercodeList.add("A4521");
+//        List<String> usercodeList = new ArrayList<>();
+//        usercodeList.add("A4521");
 //        usercodeList.add("A2988");
-        List<User> userlist;
-        userlist = userDao.getUserListBYUsercode(usercodeList);
+//        List<User> userlist;
+//        userlist = userDao.getUserListBYUsercode(usercodeList);
 
-//        String sql = new JDBCUtils().makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
-//        String conditions = " WHERE  userid >= 617007";
-//        sql = sql + conditions;
-//        userlist = userDao.getUserList(sql);
+        String sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql"));
+        String conditions = " WHERE  userid >= 617007";
+        sql = sql + conditions;
+        List<User> userlist = userDao.getUserList(sql);
 
         ldap.updateUsers(ldap, userlist);
-        ldap.authenricate("A6853", "agree123");
         ldap.closeContext();
     }
 

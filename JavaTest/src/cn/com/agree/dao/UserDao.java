@@ -2,11 +2,19 @@ package cn.com.agree.dao;
 
 import cn.com.agree.domain.User;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public interface UserDao {
-    List<User> getUserList(String sql) throws SQLException;
-    String parseOrgpath(User user);
+    List<User> getUserList(String sql) throws SQLException, IOException;
+
+    List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException, SQLException;
+
+    String parseOrgPath(User user);
+
+    Map<String, String> getOrgMap(String sql) throws SQLException, IOException, ClassNotFoundException;
+
 }
 

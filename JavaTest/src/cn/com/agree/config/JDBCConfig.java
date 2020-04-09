@@ -32,6 +32,9 @@ public class JDBCConfig extends Config {
         if (this.port == null) {
             this.port = "3306";
         }
+        if (this.getURL() == null || this.user == null || this.password == null) {
+            throw new RuntimeException("JDBC配置信息不全");
+        }
     }
 
     public String getURL() {

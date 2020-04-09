@@ -1,6 +1,12 @@
 package cn.com.agree.domain;
 
+import cn.com.agree.config.LDAPConfig;
+import cn.com.agree.utils.EncryptUtils;
+import cn.com.agree.utils.LDAPUtils;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /*
 * //删除用户
@@ -42,22 +48,31 @@ import org.junit.jupiter.api.Test;
 //			e.printStackTrace();
 //		}
 
-//密码校验
-//		try {
-//		LDAPHelper.verifySHA("{SHA}fCIvspJ9goryL1khNOiTJIBjfA0=","12345678");
-//	} catch (NoSuchAlgorithmException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	}
-//	System.out.println("加密后的密码"+LDAPHelper.Encrypt(pwd, "SHA-1"));
-//	System.exit(0);
-
-//		ldap.closeContext();
-* */
+*/
 class LDAPUtilsTest {
+    private LDAPUtils ldap;
+    private User user;
+    private String password;
+    LDAPUtilsTest() throws IOException {
+        String resourcePath = "D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource";
+        String child = "ldap.properties";
+        LDAPConfig config = new LDAPConfig(new File(resourcePath,child));
+        this.ldap = new LDAPUtils();
+        this.ldap.connect(config);
+        this.user = new User();
+        this.password = "agree123";
+        this.user.setUsercode("A6853");
+        this.user.setOrgcode("");
+        this.user.setPassword(EncryptUtils.getMD5(password));
+    }
 
     @Test
-    void authenricate() {
+    void renameEntry(){
+    }
+
+    @Test
+    void authenricateTest() {
+        ldap.authenricate(this.user.getUsercode(),this.password);
     }
 
     @Test
@@ -66,6 +81,9 @@ class LDAPUtilsTest {
 
     @Test
     void deleteAllUsers() {
+        this.ldap.addUser(user);
+//        this.ldap.deleteAllUsers("ou=赞同");
+        assert !ldap.authenricate(this.user.getUsercode(),this.password);
     }
 
     @Test

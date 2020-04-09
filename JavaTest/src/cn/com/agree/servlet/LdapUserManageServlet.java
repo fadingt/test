@@ -1,7 +1,10 @@
 package cn.com.agree.servlet;
 
 import cn.com.agree.config.LDAPConfig;
+import cn.com.agree.dao.UserDao;
+import cn.com.agree.dao.UserDaoImpl;
 import cn.com.agree.domain.User;
+import cn.com.agree.utils.JDBCUtils;
 import cn.com.agree.utils.LDAPUtils;
 
 import javax.servlet.ServletException;
@@ -15,43 +18,44 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.com.agree.utils.JDBCUtils.getUserListBYUsercode;
 
 @WebServlet(name = "LdapUserManageServlet", urlPatterns = "/updateLdapUser")
 public class LdapUserManageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        doGet(request,response);
+        doGet(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         LDAPUtils ldap = new LDAPUtils();
+        UserDao userDao = new UserDaoImpl();
         File parent = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource");
 //        String child = "ldap.properties";
         String child = "ldap_produce.properties";
-        LDAPConfig config = new LDAPConfig(new File(parent,child));
+        LDAPConfig config = new LDAPConfig(new File(parent, child));
         ldap.connect(config);
-        if(request.getQueryString() != null) {
-            System.out.println(request.getQueryString());
-            Object object = request.getAttribute("usercode");
-            System.out.println(object);
-        }else{
+        String userCode;
+        List<String> userCodeList = new ArrayList<>();
+        if (request.getQueryString() != null && request.getQueryString().contains("=")) {
+            userCode=request.getQueryString().split("=")[1];
+            System.out.println(userCode);
+            if(userCode!=null){
+                userCodeList.add(userCode);
+            }
+        } else {
             System.out.println("request is null");
         }
-//        List<String> usercodeList = new ArrayList<String>();
-//        usercodeList.add("A6853");
-//        List<User> userlist = null;
-//        try {
-//            userlist = getUserListBYUsercode(usercodeList);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        ldap.updateUsers(ldap, userlist);
-        User user = new User();
-        user.setOrgcode("A6853");
-        ldap.updateUser(ldap,user);
-        ldap.closeContext();
-        request.getRequestDispatcher("/result.jsp").forward(request,response);
+        List<User> userList;
+        try {
+            userList = userDao.getUserListBYUsercode(userCodeList);
+            System.out.println(userList.get(0).getUsername());
+            ldap.updateUsers(ldap, userList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            JDBCUtils.destroy();
+            ldap.closeContext();
+        }
+
+        request.getRequestDispatcher("/result.jsp").forward(request, response);
     }
 }

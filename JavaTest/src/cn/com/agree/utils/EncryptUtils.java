@@ -1,18 +1,12 @@
 package cn.com.agree.utils;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class EncryptUtils {
-    public static void main(String[] args) {
-        System.out.println(Encrypt("12cd005356dd68b29a0492100088b606","MD5"));
-//        System.out.println(Encrypt("1d15cda352d9c34947891c337c68a4e1","MD5"));
-//        System.out.println(getMD5("1d15cda352d9c34947891c337c68a4e1"));
-//        System.out.println(EncoderByMd5("1d15cda352d9c34947891c337c68a4e1"));
-    }
     public static String getMD5(String str) {
         MessageDigest md;
         try {
@@ -28,17 +22,12 @@ public class EncryptUtils {
     }
 
     public static String EncoderByMd5(String str) {
-        MessageDigest md5 = null;
+        MessageDigest md5;
         try {
             md5 = MessageDigest.getInstance("MD5");
             Base64.Encoder en = Base64.getEncoder();
-            String newstr = new String(en.encode(md5.digest(str.getBytes("utf-8"))));
-            return newstr;
+            return new String(en.encode(md5.digest(str.getBytes(StandardCharsets.UTF_8))));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            //todo log error
-            return null;
-        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             //todo log error
             return null;
@@ -47,7 +36,7 @@ public class EncryptUtils {
 
     public static String Encrypt(String strSrc, String encName) {
         MessageDigest md = null;
-        String strDes = null;
+        String strDes;
         byte[] bt = strSrc.getBytes();
         try {
             md = MessageDigest.getInstance(encName);
@@ -61,7 +50,7 @@ public class EncryptUtils {
             strDes = com.sun.org.apache.xerces.internal.impl.dv.util.Base64.encode(toBytes(strSrc));
 
 //            System.out.println("strDes:" + strDes);
-            if (encName.substring(0, 3) == "MD5") {
+            if (encName.substring(0, 3).equals("MD5")) {
                 strDes = "{MD5}" + strDes;
             } else {
                 strDes = "{SHA}" + strDes;
@@ -101,17 +90,17 @@ public class EncryptUtils {
      * @return
      */
     private static String bytes2Hex(byte[] bytes) {
-        StringBuffer stringBuffer = new StringBuffer();
-        String temp = null;
-        for (int i = 0; i < bytes.length; i++) {
-            temp = Integer.toHexString(bytes[i] & 0xFF);
+        StringBuilder stringBuilder = new StringBuilder();
+        String temp;
+        for (byte aByte : bytes) {
+            temp = Integer.toHexString(aByte & 0xFF);
             if (temp.length() == 1) {
                 //1得到一位的进行补0操作
-                stringBuffer.append("0");
+                stringBuilder.append("0");
             }
-            stringBuffer.append(temp);
+            stringBuilder.append(temp);
         }
-        return stringBuffer.toString();
+        return stringBuilder.toString();
     }
 
     // 将输入用户和密码进行加密算法后验证

@@ -2,45 +2,90 @@ package cn.com.agree.dao;
 
 import cn.com.agree.config.JDBCConfig;
 import cn.com.agree.domain.User;
+import cn.com.agree.utils.JDBCUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserDaoImpl implements UserDao {
-    public static void main(String[] args) {
-        User user = new User();
-        UserDao userDao = new UserDaoImpl();
-        user.setOrgcode("|0|20000|30833|30835|30843");
-        System.out.println(userDao.parseOrgpath(user));
-    }
-
     @Override
-//    TODO
-    public List<User> getUserList(String sql) throws SQLException {
+    public Map<String, String> getOrgMap(String sql) throws SQLException, IOException, ClassNotFoundException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        File file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\jdbc.properties");
-        JDBCConfig config = null;
+        File file;
+        JDBCConfig config;
         try {
+            file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\jdbc.properties");
             config = new JDBCConfig(file);
-//            "com.mysql.jdbc.Driver";"com.mysql.cj.jdbc.Driver"
-            Class.forName(config.getDriverName());
-            connection = DriverManager.getConnection(config.getURL(), config.getUser(), config.getPassword());
+            connection = JDBCUtils.getConnection(config);
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
             ResultSetMetaData meta = resultSet.getMetaData();
             int columnCnt = meta.getColumnCount();
-            List<User> userList = new ArrayList<User>();
+            Map<String, String> orgMap = new HashMap<>();
+            String key = null;
+            String val = null;
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnCnt; i++) {
+                    switch (meta.getColumnName(i).toUpperCase()) {
+                        case "S_ORGCODE":
+                            key = (String) resultSet.getObject(i);
+                            break;
+                        case "S_NAME":
+                            val = (String) resultSet.getObject(i);
+                            break;
+                    }
+                    orgMap.put(key, val);
+                }
+            }
+            return orgMap;
+        } finally {
+            JDBCUtils.free(resultSet, preparedStatement, connection);
+        }
+    }
+
+    @Override
+    public List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException, SQLException {
+        String sql;
+        StringBuilder condition = new StringBuilder();
+        condition.append(" WHERE USERCODE IN (");
+        for (String usercode : usercodeList) {
+            condition.append("'").append(usercode).append("',");
+        }
+        condition.append("'')");
+        sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql")) + condition.toString();
+        System.out.println(sql);
+        return getUserList(sql);
+    }
+
+    @Override
+//    TODO
+    public List<User> getUserList(String sql) throws SQLException, IOException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        File file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\jdbc.properties");
+        JDBCConfig config;
+        try {
+            config = new JDBCConfig(file);
+            connection = JDBCUtils.getConnection(config);
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            ResultSetMetaData meta = resultSet.getMetaData();
+            int columnCnt = meta.getColumnCount();
+            List<User> userList = new ArrayList<>();
             while (resultSet.next()) {
                 User user = new User();
                 for (int i = 1; i <= columnCnt; i++) {
                     switch (meta.getColumnName(i)) {
                         case "userid":
-                            user.setUserid(((Long)resultSet.getObject(i)).intValue());
+                            user.setUserid(((Long) resultSet.getObject(i)).intValue());
                             break;
                         case "username":
                             user.setUsername((String) resultSet.getObject(i));
@@ -62,34 +107,20 @@ public class UserDaoImpl implements UserDao {
                 userList.add(user);
             }
             return userList;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         } finally {
-            //关闭数据库连接的顺序是：ResultSet,PreparedStatement,Connection.
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            JDBCUtils.free(resultSet, preparedStatement, connection);
         }
     }
 
+
     @Override
-    public String parseOrgpath(User user) {
-        String ret = "";
+    public String parseOrgPath(User user) {
+        StringBuilder ret = new StringBuilder();
         String path = user.getOrgcode();
         String[] paths = path.substring(1).split("\\|");
-        for (int i = 0; i < paths.length; i++) {
-            ret = "ou=" + paths[i] + "," + ret;
+        for (String s : paths) {
+            ret.insert(0, "ou=" + s + ",");
         }
-        return ret;
+        return ret.toString();
     }
 }
