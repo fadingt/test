@@ -55,7 +55,8 @@ class LDAPUtilsTest {
     private String password;
     LDAPUtilsTest() throws IOException {
         String resourcePath = "D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource";
-        String child = "ldap.properties";
+        String child = "ldap_produce.properties";
+//        String child = "ldap.properties";
         LDAPConfig config = new LDAPConfig(new File(resourcePath,child));
         this.ldap = new LDAPUtils();
         this.ldap.connect(config);
@@ -108,6 +109,12 @@ class LDAPUtilsTest {
 
     @Test
     void searchInformation() {
+//        this.ldap.searchInformation("","","ou=赞同");
+        this.ldap.searchInformation("","","(objectClass=organizationalPerson)");
+    }
+    @Test
+    void searchUser(){
+        this.ldap.searchUser("ou=信息技术部,ou=赞同科技,ou=赞同","(objectClass=organizationalPerson)");
     }
 
     @Test

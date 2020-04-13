@@ -9,6 +9,7 @@ import java.util.Base64;
 public class EncryptUtils {
     public static String getMD5(String str) {
         MessageDigest md;
+        if (str == null) return null;
         try {
             md = MessageDigest.getInstance("MD5");
             md.update(str.getBytes());
@@ -23,6 +24,7 @@ public class EncryptUtils {
 
     public static String EncoderByMd5(String str) {
         MessageDigest md5;
+        if (str == null) return null;
         try {
             md5 = MessageDigest.getInstance("MD5");
             Base64.Encoder en = Base64.getEncoder();
@@ -34,9 +36,16 @@ public class EncryptUtils {
         }
     }
 
+/*    public static String BASE64(String strSrc) {
+        if (strSrc == null) return null;
+        return com.sun.org.apache.xerces.internal.impl.dv.util.Base64.encode(toBytes(strSrc));
+    }*/
+
     public static String Encrypt(String strSrc, String encName) {
         MessageDigest md = null;
         String strDes;
+//        todo null pointer error
+        if (strSrc == null) return null;
         byte[] bt = strSrc.getBytes();
         try {
             md = MessageDigest.getInstance(encName);

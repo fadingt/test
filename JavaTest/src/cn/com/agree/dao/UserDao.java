@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserDao {
+    public User getUserBYUsercode(String usercode) throws IOException;
+
     List<User> getUserList(String sql) throws SQLException, IOException;
 
     List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException, SQLException;

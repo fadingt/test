@@ -4,7 +4,6 @@ import cn.com.agree.config.LDAPConfig;
 import cn.com.agree.dao.UserDao;
 import cn.com.agree.dao.UserDaoImpl;
 import cn.com.agree.domain.User;
-import cn.com.agree.utils.JDBCUtils;
 import cn.com.agree.utils.LDAPUtils;
 
 import javax.servlet.ServletException;
@@ -19,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@WebServlet(name = "LdapUserManageServlet", urlPatterns = "/updateLdapUser")
-public class LdapUserManageServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/updateLdapUser")
+public class updateLdapUserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         doGet(request, response);
     }
@@ -42,7 +41,7 @@ public class LdapUserManageServlet extends HttpServlet {
                 userCodeList.add(userCode);
             }
         } else {
-            System.out.println("request is null");
+            System.out.println("request usercode is null");
         }
         List<User> userList;
         try {
@@ -52,10 +51,9 @@ public class LdapUserManageServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
-            JDBCUtils.destroy();
             ldap.closeContext();
         }
+        request.getRequestDispatcher("index.jsp").forward(request,response);
 
-        request.getRequestDispatcher("/result.jsp").forward(request, response);
     }
 }

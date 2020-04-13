@@ -51,7 +51,16 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException, SQLException {
+    public User getUserBYUsercode(String usercode) throws IOException {
+        if (usercode == null || usercode.equals("")) {
+            return null;
+        }
+        String sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql")) + " WHERE USERCODE =" + usercode;
+        return getUserList(sql).get(0);
+    }
+
+    @Override
+    public List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException {
         String sql;
         StringBuilder condition = new StringBuilder();
         condition.append(" WHERE USERCODE IN (");
@@ -66,7 +75,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
 //    TODO
-    public List<User> getUserList(String sql) throws SQLException, IOException {
+    public List<User> getUserList(String sql) throws IOException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -107,6 +116,10 @@ public class UserDaoImpl implements UserDao {
                 userList.add(user);
             }
             return userList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("SQLException IN UserDaoImpl.getUserList()");
+            return null;
         } finally {
             JDBCUtils.free(resultSet, preparedStatement, connection);
         }
