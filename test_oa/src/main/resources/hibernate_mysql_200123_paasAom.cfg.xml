@@ -19,17 +19,14 @@
         <property name="c3p0.maxIdleTime">25000</property>
 
 		<property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="hibernate.connection.password">query2018</property>
+        <property name="hibernate.connection.password">xitongkaifa_2019</property>
         <property name="hibernate.connection.username">query</property>
-        <property name="hibernate.connection.url">jdbc:mysql://192.9.200.123/paas_aom</property>
-		<!--<property name="hibernate.connection.password">newoa</property>-->
-		<!--<property name="hibernate.connection.url">jdbc:mysql://192.168.180.35/ngoss?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false</property>-->
-		<!--<property name="hibernate.connection.username">newoa</property>-->
+        <property name="hibernate.connection.url">jdbc:mysql://192.9.200.123/paas_aom?useSSL=true</property>
+
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-		
 		<property name="show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
-        
-		<mapping resource="User.hbm.xml" />
+
+		<mapping resource="PaasAom_User.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

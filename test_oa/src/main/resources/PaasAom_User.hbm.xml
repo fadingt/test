@@ -11,11 +11,14 @@
         <property name="usercode" type="java.lang.String">
             <column name="ACCOUNT_ID" />
         </property>
-        <property name="password" type="java.lang.String">
-            <column name="ACCOUNT_PWD" />
-        </property>
         <property name="username" type="java.lang.String">
             <column name="REAL_NAME"></column>
+        </property>
+        <property name="cellphone" type="java.lang.String">
+            <column name="TELEPHONE"></column>
+        </property>
+        <property name="mailbox" type="java.lang.String">
+            <column name="EMAIL"></column>
         </property>
     </class>
 </hibernate-mapping>

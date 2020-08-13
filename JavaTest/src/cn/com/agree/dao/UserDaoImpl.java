@@ -7,23 +7,40 @@ import cn.com.agree.utils.JDBCUtils;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 public class UserDaoImpl implements UserDao {
+    private JDBCConfig config;
+    private String parent;
+    public UserDaoImpl(){
+        File file = new File(Objects.requireNonNull(this.getClass().getClassLoader().getResource("JDBC.properties")).getPath());
+        this.parent = file.getParent();
+        try {
+            this.config = new JDBCConfig(file);
+        } catch (IOException e) {
+//            todo
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) throws IOException, SQLException {
+        File file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\deluser.sql");
+        String sql = JDBCUtils.makeSQL(file);
+        System.out.println(sql);
+        List<User> users = new UserDaoImpl().getUserList(sql);
+        System.out.println(users.get(0));
+//        for (User user:users) {
+//            System.out.println(user);
+//        }
+    }
     @Override
-    public Map<String, String> getOrgMap(String sql) throws SQLException, IOException, ClassNotFoundException {
+    public Map<String, String> getOrgMap(String sql) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        File file;
-        JDBCConfig config;
         try {
-            file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\jdbc.properties");
-            config = new JDBCConfig(file);
-            connection = JDBCUtils.getConnection(config);
+            connection = JDBCUtils.getConnection(this.config);
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
             ResultSetMetaData meta = resultSet.getMetaData();
@@ -55,12 +72,12 @@ public class UserDaoImpl implements UserDao {
         if (usercode == null || usercode.equals("")) {
             return null;
         }
-        String sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql")) + " WHERE USERCODE =" + usercode;
+        String sql = JDBCUtils.makeSQL(new File(this.parent,"user.sql")) + " WHERE USERCODE ='" + usercode+"'";
         return getUserList(sql).get(0);
     }
 
     @Override
-    public List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException {
+    public List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException{
         String sql;
         StringBuilder condition = new StringBuilder();
         condition.append(" WHERE USERCODE IN (");
@@ -68,7 +85,7 @@ public class UserDaoImpl implements UserDao {
             condition.append("'").append(usercode).append("',");
         }
         condition.append("'')");
-        sql = JDBCUtils.makeSQL(new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\user.sql")) + condition.toString();
+        sql = JDBCUtils.makeSQL(new File(this.parent,"user.sql")) + condition.toString();
         System.out.println(sql);
         return getUserList(sql);
     }
@@ -79,7 +96,7 @@ public class UserDaoImpl implements UserDao {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        File file = new File("D:\\9zliuxingyu@gmail.com\\test\\JavaTest\\resource\\jdbc.properties");
+        File file = new File(this.parent,"JDBC.properties");
         JDBCConfig config;
         try {
             config = new JDBCConfig(file);
@@ -95,6 +112,7 @@ public class UserDaoImpl implements UserDao {
                     switch (meta.getColumnName(i)) {
                         case "userid":
                             user.setUserid(((Long) resultSet.getObject(i)).intValue());
+//                            user.setUserid((Integer) resultSet.getObject(i));
                             break;
                         case "username":
                             user.setUsername((String) resultSet.getObject(i));
@@ -118,7 +136,6 @@ public class UserDaoImpl implements UserDao {
             return userList;
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("SQLException IN UserDaoImpl.getUserList()");
             return null;
         } finally {
             JDBCUtils.free(resultSet, preparedStatement, connection);

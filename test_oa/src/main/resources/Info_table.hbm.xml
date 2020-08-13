@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 28, 2018 4:49:25 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="domain.Tables" table="tables" schema="information_schema">
+        <composite-id>
+            <key-property name="name"></key-property>
+            <key-property name="schema"></key-property>
+        </composite-id>
+        <property name="schema" type="java.lang.String">
+            <column name="TABLE_SCHEMA"/>
+        </property>
+        <property name="name" type="java.lang.String">
+            <column name="TABLE_NAME"/>
+        </property>
+        <property name="engine" type="java.lang.String">
+            <column name="ENGINE"/>
+        </property>
+        <property name="createTime" type="java.lang.String">
+            <column name="CREATE_TIME"/>
+        </property>
+        <property name="updateTime" type="java.lang.String">
+            <column name="UPDATE_TIME"/>
+        </property>
+        <property name="collation" type="java.lang.String">
+            <column name="TABLE_COLLATION"/>
+        </property>
+        <property name="comment" type="java.lang.String">
+            <column name="TABLE_COMMENT"/>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -2,8 +2,10 @@ package action;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSON;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,12 +36,12 @@ public class Index {
      */
     @RequestMapping("/index.do")
     public String index(@RequestParam(defaultValue = "hello world") String message) {
-        return "index";
+        return "index.jsp";
     }
 
     @RequestMapping("/index2.do")
     public String index2() {
-        return "index2";
+        return "index2.jsp";
     }
 
     @RequestMapping("/index3.do")
@@ -118,12 +120,33 @@ public class Index {
         arr.add(u3);
         return arr.toString();
     }
+
     @RequestMapping("vuex.do")
-    public String vuex(){
-        return "vuex";
+    public String vuex() {
+        return "vuex.jsp";
     }
+
     @RequestMapping("render.do")
-    public String render(){
-        return "render";
+    public String render() {
+        return "render.jsp";
     }
+
+    @PostMapping(value = "/commitForm.do", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String commitForm() {
+        JSONArray arr = new JSONArray();
+        User u1 = new User("张鸿宇");
+        User u2 = new User("王容峰");
+        User u3 = new User("陈茁");
+        arr.add(u1);
+        arr.add(u2);
+        arr.add(u3);
+        return arr.toString();
+    }
+
+    @RequestMapping("shoelaceFormDemo.do")
+    public String shoelaceFormDemo() {
+        return "shoelaceFormDemo.html";
+    }
+
 }

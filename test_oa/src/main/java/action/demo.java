@@ -31,7 +31,7 @@ public class demo {
             }
             return "saveUser";
         }
-        return "saveUser";
+        return "saveUser.jsp";
     }
 
     @RequestMapping("demo2.do")
@@ -40,7 +40,7 @@ public class demo {
         Expression expression = parser.parseExpression("'hello'");
         System.out.println(expression.getValue());
         System.out.println(demo2);
-        return "saveUser";
+        return "saveUser.jsp";
     }
 
 }

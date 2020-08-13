@@ -4,6 +4,7 @@ import cn.com.agree.config.JDBCConfig;
 
 import java.io.*;
 import java.sql.*;
+import java.util.Objects;
 
 /**
  *JDBC工具类<br>
@@ -11,8 +12,15 @@ import java.sql.*;
  * 提供JDBC连接和注销方法
  */
 public class JDBCUtils {
+    private JDBCConfig config;
 
     private JDBCUtils() {
+        File file = new File(Objects.requireNonNull(JDBCUtils.class.getClassLoader().getResource("JDBC.properties")).getPath());
+        try {
+            this.config = new JDBCConfig(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     static {
@@ -23,10 +31,12 @@ public class JDBCUtils {
         }
     }
 
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(config.getURL(), config.getUser(), config.getPassword());
+    }
     public static Connection getConnection(String url, String user, String password) throws SQLException {
         return DriverManager.getConnection(url, user, password);
     }
-
     public static Connection getConnection(JDBCConfig config) throws SQLException {
         return DriverManager.getConnection(config.getURL(), config.getUser(), config.getPassword());
     }

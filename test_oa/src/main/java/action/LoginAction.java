@@ -3,6 +3,8 @@ package action;
 import javax.annotation.Resource;
 
 import action.validate.UserValidator;
+import dao.UserDao;
+import dao.impl.HibernateUserDaoImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import domain.User;
 import service.IUserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -54,4 +57,5 @@ public class LoginAction {
     public String userform() {
         return "saveUser";
     }
+
 }

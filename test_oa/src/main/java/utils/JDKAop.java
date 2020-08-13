@@ -16,15 +16,14 @@ public class JDKAop implements InvocationHandler {
     }
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Object result = method.invoke(hibernateUserDao,args);
-        return result;
+        return method.invoke(hibernateUserDao,args);
     }
 
     public static void main(String[] args) {
         User user = new User();
-        user.setUsername("liuxingyu");
+        user.setUsername("leo");
         user.setPassword("111111");
-        user.setUsercode("Atest");
+        user.setUsercode("A6853");
         InvocationHandler handler = new JDKAop(new HibernateUserDaoImpl());
         ClassLoader classLoader = HibernateUserDaoImpl.class.getClassLoader();
         UserDao proxy = (UserDao) Proxy.newProxyInstance(classLoader,HibernateUserDaoImpl.class.getInterfaces(),handler);

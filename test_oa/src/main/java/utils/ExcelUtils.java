@@ -9,8 +9,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 class ExcelPosition {
     private String rowNumber;
@@ -46,7 +44,7 @@ class CellStringException extends RuntimeException {
 }
 
 public class ExcelUtils {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 //        readExcelCell("D:/AOM/ZT_ITD_AOM_BLG_0001 问题反馈 v1.0.0 20190704.xlsx", 3, 3);
 //        String filepath = "D:/AOM/ZT_ITD_AOM_BLG_0001 问题反馈 v1.0.0 20190704.xlsx";
 //        XSSFReadCell(4, 4, 0, new File(filepath));

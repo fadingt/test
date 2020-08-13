@@ -12,7 +12,7 @@ public interface UserDao {
 
     List<User> getUserList(String sql) throws SQLException, IOException;
 
-    List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException, SQLException;
+    List<User> getUserListBYUsercode(List<String> usercodeList) throws IOException;
 
     String parseOrgPath(User user);
 

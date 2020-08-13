@@ -12,29 +12,18 @@ import java.util.Properties;
 
 
 public final class MailUtils {
+    // TODO: 8/13/2020 FUNCTION:将接受数据内容本地保存 比如保存到EXCEL中
     public static void main(String[] args) throws MessagingException, IOException {
-/*        Message[] rMessages = receiveEmail("liuxingyu@agree.com.cn", "z13833545277", init263POPSession());
-        Message message = new MimeMessage(init263SMTPSession());
-        message.setFrom(new InternetAddress("liuxingyu@agree.com.cn"));
-        message.setRecipient(Message.RecipientType.TO, new InternetAddress("378730609@qq.com"));
-        message.setSubject("MailUtils test");
-        String test = showMailMessage(findMessage(rMessages, "体检"));
-        message.setText(test);
-        sendEmail(message);*/
-        /*
-         * 1.接收support邮箱邮件。记录文本内容和附件
-         * 2.将文本内容分类写入Excel中
-         * */
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String now = dateFormat.format(new Date());
         System.out.println("nowday is:\t" + now);
 //        Message[] messages = receiveEmail("support@agree.com.cn", "ag1234", init263POPSession());
         Message[] messages = receiveEmail("liuxingyu@agree.com.cn", "z13833545277", init263POPSession());
         if (messages.length > 0) {
-            for (int i = 0; i < messages.length; i++) {
-                if (dateFormat.format(messages[i].getSentDate()).equals(now)) {
-                    String messageText = showMailMessage(messages[i]);
-                    String filename = "NO" + messages[i].getMessageNumber() + ".txt";
+            for (Message message : messages) {
+                if (dateFormat.format(message.getSentDate()).equals(now)) {
+                    String messageText = showMailMessage(message);
+                    String filename = "NO" + message.getMessageNumber() + ".txt";
                     FileUtils.saveFile(messageText, "D:/JAVAIO_TEMP/supMail/" + filename);
                 }
             }
@@ -174,19 +163,19 @@ public final class MailUtils {
         } else if (part.isMimeType("text/html")) {
             contentStr.append(part.getContent());
         } else if (part.isMimeType("message/rfc822")) {
-            getMailText((Part) part.getContent());
+            contentStr.append(getMailText((Part) part.getContent()));
         } else if (part.isMimeType("multipart/*")) {
             Multipart multipart = (Multipart) part.getContent();
             int len = multipart.getCount();
             for (int i = 0; i < len; i++) {
-                getMailText(multipart.getBodyPart(i));
+                contentStr.append(getMailText(multipart.getBodyPart(i)));
             }
         }
 
-        return "";
+        return contentStr.toString();
     }
 
-    public static Message findMessage(Message[] messages, String condition) throws MessagingException, IOException {
+    public static Message findMessage(Message[] messages, String condition) throws MessagingException {
         for (Message message : messages) {
             if (message.getSubject().equals(condition)) {
                 return message;

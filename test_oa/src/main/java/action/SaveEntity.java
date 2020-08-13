@@ -31,15 +31,15 @@ public class SaveEntity {
     @RequestMapping("/saveUser.do")
     @ResponseBody
     public ModelAndView saveUser(@Validated User user, BindingResult result) {
-        ModelAndView mav = new ModelAndView("saveUser");
+        ModelAndView mav = new ModelAndView("saveUser.jsp");
         // not validated
         if (result.hasErrors()) {
             System.out.println("validate");
             List<ObjectError> ls = result.getAllErrors();
-            for (int i = 0; i < ls.size(); i++){
-                System.out.println("error:"+ls.get(i));
+            for (ObjectError l : ls) {
+                System.out.println("error:" + l);
             }
-                return new ModelAndView("error");
+                return new ModelAndView("error.jsp");
         }
 
         // TODO encrypt password with MD5
