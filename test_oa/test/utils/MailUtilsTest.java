@@ -14,15 +14,27 @@ import static utils.MailUtils.*;
 
 
 class MailUtilsTest {
+    private MailUtils mailUtil;
+
+    public MailUtilsTest() {
+        this.mailUtil = new MailUtils();
+        try {
+            this.mailUtil.init();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
-    void receiveEmail() throws MessagingException {
-        Message[] messages = MailUtils.receiveEmail("liuxingyu@agree.com.cn", "z13833545277", "pop3", "pop3.263.net", "110");
+    void ReceiveEmailTest() throws IOException, MessagingException {
+        Message[] messages = this.mailUtil.receiveEmail();
+        System.out.println(messages.length);
         assert messages.length > 0;
     }
 
     @Test
-    void testReceiveEmail() {
+    void getSessionTest() {
+
     }
 
     @Test
@@ -30,28 +42,31 @@ class MailUtilsTest {
     }
 
     @Test
-    void sendEmail() throws MessagingException, IOException {
-        Message[] rMessages = MailUtils.receiveEmail("liuxingyu@agree.com.cn", "z13833545277", init263POPSession());
-        Message message = new MimeMessage(init263SMTPSession());
-        message.setFrom(new InternetAddress("liuxingyu@agree.com.cn"));
-        message.setRecipient(Message.RecipientType.TO, new InternetAddress("378730609@qq.com"));
-        message.setSubject("MailUtils test");
-        String test = MailUtils.showMailMessage(MailUtils.findMessage(rMessages, "体检"));
-        message.setText(test);
-        MailUtils.sendEmail(message);
+    void sendEmailTest() throws MessagingException, IOException {
+//        Message[] rMessages = this.mailUtil.receiveEmail();
+//        Message message = new MimeMessage(init263SMTPSession());
+//        message.setFrom(new InternetAddress("liuxingyu@agree.com.cn"));
+//        message.setRecipient(Message.RecipientType.TO, new InternetAddress("378730609@qq.com"));
+//        message.setSubject("MailUtils test");
+//        String test = MailUtils.showMailMessage(MailUtils.findMessage(rMessages, "体检"));
+//        message.setText(test);
+//        this.mailUtil.sendEmail(message);
+        this.mailUtil.sendEmail("测试","文本内容","378730609@qq.com");
     }
-
-    @Test
-    void testSendEmail() throws MessagingException, IOException {
-        Message[] rMessages = MailUtils.receiveEmail("liuxingyu@agree.com.cn", "z13833545277", init263POPSession());
-        Message message = new MimeMessage(init263SMTPSession());
-        message.setFrom(new InternetAddress("liuxingyu@agree.com.cn"));
-        message.setRecipient(Message.RecipientType.TO, new InternetAddress("378730609@qq.com"));
-        message.setSubject("MailUtils test");
-        String test = MailUtils.showMailMessage(MailUtils.findMessage(rMessages, "体检"));
-        message.setText(test);
-        MailUtils.sendEmail(message,"liuxingyu@agree.com.cn","z13833545277");
-    }
+//
+//    @Test
+//    void SendEmailTest() throws MessagingException, IOException {
+//        Message[] rMessages = this.mailUtil.receiveEmail();
+//        Message message = new MimeMessage(init263SMTPSession());
+//        message.setFrom(new InternetAddress("liuxingyu@agree.com.cn"));
+//        message.setRecipient(Message.RecipientType.TO, new InternetAddress("378730609@qq.com"));
+//        message.setSubject("MailUtils test");
+////        String test = MailUtils.showMailMessage(MailUtils.findMessage(rMessages, "体检"));
+//        String test = MailUtils.showMailMessage(MailUtils.findMessage(rMessages, "赞同科技2020-2021年度体检通知"));
+//        message.setText(test);
+////        System.out.println(test);
+//        this.mailUtil.sendEmail(message, "liuxingyu@agree.com.cn", "z13833545277");
+//    }
 
     @Test
     void isContainAttachment() {
@@ -73,6 +88,6 @@ class MailUtilsTest {
     void saveAttachment() throws IOException, MessagingException {
         String destDir = "D:/";
         Part part = null;
-        MailUtils.saveAttachment(part,destDir);
+        MailUtils.saveAttachment(part, destDir);
     }
 }

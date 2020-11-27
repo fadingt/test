@@ -29,10 +29,10 @@ public class UserDaoImpl implements UserDao {
         String sql = JDBCUtils.makeSQL(file);
         System.out.println(sql);
         List<User> users = new UserDaoImpl().getUserList(sql);
-        System.out.println(users.get(0));
-//        for (User user:users) {
-//            System.out.println(user);
-//        }
+//        System.out.println(users.get(0));
+        for (User user:users) {
+            System.out.println(user);
+        }
     }
     @Override
     public Map<String, String> getOrgMap(String sql) throws SQLException {
@@ -111,8 +111,8 @@ public class UserDaoImpl implements UserDao {
                 for (int i = 1; i <= columnCnt; i++) {
                     switch (meta.getColumnName(i)) {
                         case "userid":
-                            user.setUserid(((Long) resultSet.getObject(i)).intValue());
-//                            user.setUserid((Integer) resultSet.getObject(i));
+//                            user.setUserid(((Long) resultSet.getObject(i)).intValue());
+                            user.setUserid((Integer) resultSet.getObject(i));
                             break;
                         case "username":
                             user.setUsername((String) resultSet.getObject(i));
