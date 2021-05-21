@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表单填写</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.9/dist/shoelace/shoelace.css">
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.9/dist/shoelace/shoelace.esm.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+<!--    <style rel="stylesheet">@import "css/demo.css";</style>-->
+    <style rel="stylesheet">@import "http://192.168.195.142:8088/aom/static/css/demo.css";</style>
+<!--    <style rel="stylesheet">@import "../../static/css/demo.css";</style>-->
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.22/themes/dark.css">-->
+</head>
+<body class="sl-theme-dark">
+<sl-avatar class="avatar" initials="刘" class="avatar"></sl-avatar>
+<script>
+    const form = document.querySelector('.form-overview');
+
+    form.addEventListener('slSubmit', event => {
+        const formData = event.detail.formData;
+        let output = '';
+
+        //
+        // Example 1: Post data to a server and wait for a JSON response
+        //
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        //
+        // Example 2: Output all form control names + values
+        //
+        for (const entry of formData.entries()) {
+            output += `${entry[0]}: ${entry[1]}\n`;
+        }
+        alert(output);
+
+        //
+        // Example 3: Get all form controls that were serialized as
+        // an array of HTML elements
+        //
+        console.log(event.detail.formControls);
+    });
+</script>
+<!--<sl-icon src="../img/github-svgrepo-com.svg" slot="img"></sl-icon>-->
+<sl-tab-group placement="right">
+    <sl-tab slot="nav" panel="general">General</sl-tab>
+    <sl-tab slot="nav" panel="custom">Custom</sl-tab>
+    <sl-tab slot="nav" panel="advanced">Advanced</sl-tab>
+    <sl-tab slot="nav" panel="disabled">Disabled</sl-tab>
+
+    <sl-tab-panel name="general">
+        <sl-form class="form-overview">
+            <sl-button type="primary" pill>
+                <sl-icon slot="suffix" name="arrow-counterclockwise"></sl-icon>
+                Reset
+            </sl-button>
+            <sl-button type="primary" pill submit>
+                <sl-icon slot="suffix" name="arrow-return-left"></sl-icon>
+                提交
+            </sl-button>
+            <br><br>
+            <sl-alert close closable class="alert-form">
+                <sl-icon slot="icon" name="exclamation-triangle"></sl-icon>
+                <strong id="alert_content"></strong><br>
+            </sl-alert>
+            <div class="fk">
+                <sl-input name="ipadress" type="text" label="IP地址" pill>
+                    <sl-icon name="tag" slot="prefix"></sl-icon>
+                    <sl-icon name="gear" slot="suffix"></sl-icon>
+                </sl-input>
+                <sl-input name="cloud" type="text" label="云环境"></sl-input>
+                <sl-input name="location" type="text" label="场地"></sl-input>
+                <sl-input name="cpu" type="text" label="CPU"></sl-input>
+                <sl-input name="ram" type="text" label="内存"></sl-input>
+                <sl-input name="disk" type="text" label="硬盘"></sl-input>
+                <sl-input name="password" type="password" label="密码" toggle-password></sl-input>
+                <sl-input name="cloud" type="text" label="disabled" placeholder="disabled" disabled></sl-input>
+                <sl-input label="Invalid" invalid>
+                    <div slot="help-text">This is an invalid input</div>
+                </sl-input>
+                <sl-input label="Valid" valid>
+                    <div slot="help-text">This is a valid input</div>
+                </sl-input>
+            </div>
+        </sl-form>
+        <script>
+            const form = document.querySelector('.form-overview');
+            const alter_form = document.querySelector('.alert-form');
+            form.addEventListener('slSubmit', event => {
+                const formData = event.detail.formData;
+                // Example 1: Post data to a server and wait for a JSON response
+                fetch('/test/commitForm.do', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        alter_form.setAttribute("type", "success");
+                        alter_form.innerHTML = "Your changes have been saved";
+                        alter_form.open = true;
+                    })
+                    .catch(error => {
+                        alter_form.setAttribute("type", "danger");
+                        alter_form.innerHTML = "Your changes have not been saved";
+                        alter_form.open = true;
+                        console.error('Error:', error);
+                    });
+            });
+        </script>
+    </sl-tab-panel>
+    <sl-tab-panel name="custom">
+        <input id="file" class="file" accept="*/*" type="file">
+        <sl-button id="button-uploader" title="点击选择文件" type="primary" pill>
+            上传
+            <sl-icon slot="prefix" name="cloud-upload"></sl-icon>
+        </sl-button>
+        <div id="div"></div>
+
+        <sl-button type="primary" pill>
+            下载
+            <sl-icon slot="prefix" name="cloud-download"></sl-icon>
+        </sl-button>
+        <script>
+            $(document).ready(function () {
+                $('#button-uploader').click(function () {
+                    $('.file').click();
+                });
+            });
+
+        </script>
+        <script>
+            var myfile = document.getElementById('file');
+            var div = document.getElementById('div');
+            myfile.onchange = function () {
+                //获取上传文件的文件名
+                if (myfile.files[0] != undefined) {
+                    div.innerHTML = div.innerHTML +"<sl-icon name=\"file-earmark-plus\"></sl-icon>   "+ myfile.files[0].name +'<br>';
+                }
+            }
+        </script>
+
+    </sl-tab-panel>
+
+    <sl-tab-panel name="advanced">
+        <sl-progress-ring percentage="50" size="200" class="progress-ring-labels" style="margin-bottom: .5rem;">50%
+        </sl-progress-ring>
+
+        <br>
+
+        <sl-button circle>
+            <sl-icon name="dash"></sl-icon>
+        </sl-button>
+        <sl-button circle>
+            <sl-icon name="plus"></sl-icon>
+        </sl-button>
+        <script>
+            const progressRing = document.querySelector('.progress-ring-labels');
+            const subtractButton = progressRing.nextElementSibling.nextElementSibling;
+            const addButton = subtractButton.nextElementSibling;
+
+            addButton.addEventListener('click', () => {
+                const percentage = Math.min(100, progressRing.percentage + 10);
+                progressRing.percentage = percentage;
+                progressRing.textContent = `${percentage}%`;
+            });
+
+            subtractButton.addEventListener('click', () => {
+                const percentage = Math.max(0, progressRing.percentage - 10)
+                progressRing.percentage = percentage;
+                progressRing.textContent = `${percentage}%`;
+            });
+        </script>
+
+    </sl-tab-panel>
+    <sl-tab-panel name="disabled">
+        <sl-progress-bar percentage="50" class="progress-bar-labels">50%</sl-progress-bar>
+
+        <br>
+
+        <sl-button circle>
+            <sl-icon name="dash"></sl-icon>
+        </sl-button>
+        <sl-button circle>
+            <sl-icon name="plus"></sl-icon>
+        </sl-button>
+
+        <script>
+            const progressBar2 = document.querySelector('.progress-bar-labels');
+            const subButton2 = progressBar2.nextElementSibling.nextElementSibling;
+            const addButton2 = subButton2.nextElementSibling;
+
+            addButton2.addEventListener('click', () => {
+                const percentage = Math.min(100, progressBar2.percentage + 10);
+                progressBar2.percentage = percentage;
+                progressBar2.textContent = `${percentage}%`;
+            });
+
+            subButton2.addEventListener('click', () => {
+                const percentage = Math.max(0, progressBar2.percentage - 10)
+                progressBar2.percentage = percentage;
+                progressBar2.textContent = `${percentage}%`;
+            });
+        </script>
+
+    </sl-tab-panel>
+</sl-tab-group>
+
+<div id="footer">
+    感谢<a href="https://shoelace.style/">shoelace</a>的开源组件
+</div>
+</body>
+</html>

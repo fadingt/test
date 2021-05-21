@@ -1,0 +1,123 @@
+#footer {
+     bottom: 0;
+     font-size: 10pt;
+     height: 105px;
+     width: 100%;
+ }
+.M6hT6 {
+    left: 0;
+    right: 0;
+    -webkit-text-size-adjust: none
+}
+
+.fbar a, #fsettl {
+    text-decoration: none;
+    white-space: nowrap
+}
+
+.fbar {
+    margin-left: -27px
+}
+
+.Fx4vi {
+    padding-left: 27px;
+    margin: 0 !important
+}
+
+#fsl {
+}
+
+.f6F9Be {
+    background: #f2f2f2;
+    line-height: 40px;
+    min-width: 980px;
+    border-top: 1px solid #e4e4e4;
+    min-width: 400px
+}
+
+.B4GxFc {
+    margin-left: 166px
+}
+
+.fbar p, .fbar a, #fsettl, #fsett a {
+    color: #5f6368
+}
+
+.fbar a:hover, #fsett a:hover {
+    color: #333
+}
+
+.fbar {
+    font-size: 14px
+}
+
+.EvHmz {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0
+}
+
+.hRvfYe #fsettl:hover {
+    text-decoration: underline
+}
+
+.hRvfYe #fsett a:hover {
+    text-decoration: underline
+}
+
+.hRvfYe a:hover {
+    text-decoration: underline
+}
+
+#fsl {
+    margin-left: 30px;
+    float: left
+}
+
+#fsr {
+    float: right;
+    margin-right: 30px;
+}
+
+@media (max-width: 805px) {
+    #fsl, #fsr {
+        display: block;
+        margin: 0;
+        float: none
+    }
+
+    .fbar {
+        text-align: center
+    }
+}
+
+.b0KoTc {
+    color: rgba(0, 0, 0, .54);
+    padding-left: 27px
+}
+
+.b0KoTc {
+    margin-left: 30px;
+    text-align: left
+}
+
+#fsett {
+    background: #fff;
+    border: 1px solid #999;
+    bottom: 30px;
+    padding: 10px 0;
+    position: absolute;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+    text-align: left;
+    z-index: 128
+}
+
+#fsett a {
+    display: block;
+    line-height: 44px;
+    padding: 0 20px;
+    text-decoration: none;
+    white-space: nowrap
+}

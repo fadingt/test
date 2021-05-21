@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 28, 2018 4:49:25 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="domain.paasaom.UserRole" table="plf_aos_auth_role">
+        <id name="id" type="int">
+            <column name="id"/>
+            <generator class="native"/>
+        </id>
+        <property name="createTime" type="java.util.Date">
+            <column name="create_time"></column>
+        </property>
+        <property name="lastUpdateTime" type="java.util.Date">
+            <column name="last_update_time"></column>
+        </property>
+        <property name="rolename" type="java.lang.String">
+            <column name="role_name"></column>
+        </property>
+        <property name="rolecode" type="java.lang.String">
+            <column name="role_code"></column>
+        </property>
+        <property name="roledesc" type="java.lang.String">
+            <column name="role_desc"></column>
+        </property>
+        <property name="deleted" type="java.lang.Integer">
+            <column name="is_delete"></column>
+        </property>
+        <property name="admin" type="java.lang.Integer">
+            <column name="is_admin"></column>
+        </property>
+    </class>
+</hibernate-mapping>

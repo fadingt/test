@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 28, 2018 4:49:25 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="domain.paasaom.Org" table="plf_aos_auth_org">
+        <id name="id" type="int">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="orgcode" type="java.lang.String">
+            <column name="org_code" />
+        </property>
+        <property name="orgname" type="java.lang.String">
+            <column name="org_name"></column>
+        </property>
+        <property name="fullorgname" type="java.lang.String">
+            <column name="s_fulltext"></column>
+        </property>
+        <property name="parentcode" type="java.lang.String">
+            <column name="org_parent_code"></column>
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="IS_DELETE"></column>
+        </property>
+        <set name="users">
+            <key column="org_code"></key>
+            <one-to-many class="domain.paasaom.User"></one-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

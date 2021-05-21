@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!--C3P0配置 -->
+        <property name="org.hibernate.c3p0.internal.C3P0ConnectionProvider">
+            org.hibernate.connection.C3P0ConnectionProvider
+        </property>
+        <property name="hibernate.c3p0.max_size">20</property>
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.timeout">120</property>
+        <!--<property name="automaticTestTable">Test</property>-->
+        <property name="hibernate.c3p0.max_statements">100</property>
+
+        <property name="hibernate.c3p0.idle_test_period">120</property>
+        <property name="hibernate.c3p0.acquire_increment">1</property>
+        <property name="c3p0.testConnectionOnCheckout">true</property>
+
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://192.9.200.123:3306/paas_aom?useSSL=true&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=GMT%2b8</property>
+        <property name="hibernate.connection.password">xitongkaifa_2019</property>
+        <property name="hibernate.connection.username">query</property>
+
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="show_sql">false</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <mapping resource="conf/PaasAom_User.hbm.xml"/>
+        <mapping resource="conf/PaasAom_Workflow.hbm.xml"/>
+        <mapping resource="conf/PaasAom_Staff.hbm.xml"/>
+        <mapping resource="conf/PaasAom_Dict.hbm.xml"/>
+        <mapping resource="conf/PaasAom_UserRole.hbm.xml"/>
+        <mapping resource="conf/PaasAom_Org.hbm.xml"/>
+        <mapping resource="conf/PaasAom_CustSale.hbm.xml"/>
+        <mapping resource="conf/PaasAom_CustTech.hbm.xml"/>
+        <mapping resource="conf/NGOSS_birole.hbm.xml"/>
+        <mapping class="domain.ngoss.TSnapContractsyncEntity"/>
+    </session-factory>
+</hibernate-configuration>

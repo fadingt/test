@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表单填写</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.9/dist/shoelace/shoelace.css">
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.9/dist/shoelace/shoelace.esm.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+  </head>
+<body>
+<style type="text/css">
+    @import "css/demo.css";
+</style>
+<sl-tab-group placement="right">
+    <sl-tab slot="nav" panel="custom">Custom</sl-tab>
+
+    <sl-tab-panel name="custom">
+
+        <sl-tooltip content="上传文件">
+            <sl-icon-button submit name="cloud-upload" style="font-size: 2em"></sl-icon-button>
+        </sl-tooltip>
+        <form id="file_form">
+            <input type="file" id="file">
+        </form>
+        <script>
+            $('.submit').click(function () {
+                var crowd_name = $.trim($('#upload_crowd_name').val());
+                var crowd_desc = $.trim($('#upload_crowd_desc').val());
+                var crowd_file = $('#file')[0].files[0];
+
+                var formData = new FormData();
+
+                formData.append("crowd_file",$('#file')[0].files[0]);
+                formData.append("crowd_name", crowd_name);
+                formData.append("crowd_desc", crowd_desc);
+
+                $.ajax({
+                    url:'/test/upload.do',
+                    dataType:'multipart/form-data',
+                    type:'POST',
+                    async: false,
+                    data: formData,
+                    processData : false, // 使数据不做处理
+                    contentType : "image/jpeg", // 不要设置Content-Type请求头
+                    success: function(data){
+                        console.log(data);
+                        if (data.status == 'ok') {
+                            alert('上传成功！');
+                        }
+
+                    },
+                    error:function(response){
+                        alert("失败")
+                        console.log(response);
+                    }
+                });
+
+            })
+        </script>
+        <form method="post" action="/test/upload/" enctype="multipart/form-data">
+            <input id="user" type="text" name="user" />
+            <input id='img' type="file" name="img" />
+            <input type="submit" />
+        </form>
+        <sl-tooltip content="上传文件">
+            <sl-icon-button onclick="uploadFile" name="cloud-upload" style="font-size: 2em"></sl-icon-button>
+        </sl-tooltip>
+
+        <script>
+
+            function uploadFile() {
+                var fileobj = $("#img")[0].files[0];
+                console.log(fileobj);
+                var form = new FormData();
+                form.append("img", fileobj);
+                form.append("uesr", 'alex');
+                $.ajax({
+                    type: 'POST',
+                    url: '/test/upload/',
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: function (arg) {
+                        console.log(arg)
+                    }
+                })
+            }
+        </script>
+    </sl-tab-panel>
+</sl-tab-group>
+
+<div style="position: absolute;bottom: 0;left: 50%;transform: translate(-50%, -50%);">
+    感谢<a href="https://shoelace.style/">shoelace</a>提供的开源web组件
+</div>
+</body>
+</html>

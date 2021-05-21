@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 28, 2018 4:49:25 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="domain.paasaom.CustTech" lazy="false" table="mdl_aos_sacusttech">
+        <id name="id" type="int">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="techid" type="java.lang.Integer">
+            <column name="s_techid" />
+        </property>
+        <property name="custid" type="java.lang.Integer">
+            <column name="i_custid" />
+        </property>
+        <property name="deptline" type="char">
+            <column name="s_deptl" />
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="is_delete" />
+        </property>
+    </class>
+</hibernate-mapping>

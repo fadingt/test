@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="domain.paasaom.CustSale" lazy="false" table="mdl_aos_sacustsale">
+        <id name="id" type="int">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="saleid" type="java.lang.Integer">
+            <column name="s_saleid" />
+        </property>
+        <property name="custid" type="java.lang.Integer">
+            <column name="i_custid" />
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="is_deleted" />
+        </property>
+    </class>
+</hibernate-mapping>

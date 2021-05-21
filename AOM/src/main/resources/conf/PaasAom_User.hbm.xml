@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+" http://www.hibernate.org/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="domain.paasaom.User" table="plf_aos_auth_user">
+        <id name="userid" type="int">
+            <column name="ID" />
+            <generator class="increment"></generator>
+        </id>
+        <property name="usercode" type="java.lang.String">
+            <column name="ACCOUNT_ID" />
+        </property>
+        <property name="username" type="java.lang.String">
+            <column name="REAL_NAME"></column>
+        </property>
+        <property name="cellphone" type="java.lang.String">
+            <column name="MOBILE"></column>
+        </property>
+        <property name="mailbox" type="java.lang.String">
+            <column name="EMAIL"></column>
+        </property>
+        <property name="sex" type="java.lang.Integer">
+            <column name="SEX"></column>
+        </property>
+        <property name="states" type="int">
+            <column name="STATUS"></column>
+        </property>
+        <property name="roleids" type="java.lang.String">
+            <column name="role_ids"></column>
+        </property>
+        <property name="superiorLeader" type="java.lang.Integer">
+            <column name="superior_leader"></column>
+        </property>
+        <property name="isAdmin" type="java.lang.Integer">
+            <column name="is_admin"></column>
+        </property>
+        <property name="shdEnable" type="java.lang.Integer">
+            <column name="shd_enable"></column>
+        </property>
+        <property name="orgcode" type="java.lang.String">
+            <column name="org_code"></column>
+        </property>
+        <one-to-one name="staff"></one-to-one>
+    </class>
+</hibernate-mapping>

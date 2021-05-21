@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 28, 2018 4:49:25 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="domain.paasaom.Dictionary" table="plf_aos_dictionary">
+        <id name="ID" type="int">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="dictcode" type="java.lang.String">
+            <column name="DICT_CODE" />
+        </property>
+        <property name="dicttype" type="java.lang.String">
+            <column name="DICT_TYPE"></column>
+        </property>
+        <property name="dictname" type="java.lang.String">
+            <column name="DICT_NAME"></column>
+        </property>
+        <property name="parentcode" type="java.lang.String">
+            <column name="DICT_PARENT_CODE"></column>
+        </property>
+        <property name="status" type="boolean">
+            <column name="status"></column>
+        </property>
+        <property name="deleted" type="boolean">
+            <column name="IS_DELETE"></column>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 28, 2018 4:49:25 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="domain.paasaom.Staff" table="mdl_aos_empstaff">
+        <id name="userid" type="java.lang.Integer">
+            <column name="i_userid" />
+            <generator class="foreign">
+                <param name="property">user</param>
+            </generator>
+        </id>
+        <property name="hireTime" type="java.util.Date">
+            <column name="dt_hiretime"></column>
+        </property>
+        <property name="enterTime" type="java.util.Date">
+            <column name="dt_entertime"></column>
+        </property>
+        <property name="leader" type="java.lang.Integer">
+            <column name="s_leader"></column>
+        </property>
+        <property name="id" type="java.lang.Integer">
+            <column name="id"></column>
+        </property>
+        <one-to-one name="user" lazy="false" class="domain.paasaom.User"></one-to-one>
+    </class>
+</hibernate-mapping>

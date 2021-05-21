@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 28, 2018 4:49:25 PM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="domain.paasaom.Workflow" table="mdl_aos_actmap">
+        <id name="id" type="int">
+            <column name="ID" />
+            <generator class="increment" />
+        </id>
+        <property name="I_TECHID" type="int">
+            <column name="I_TECHID" />
+        </property>
+        <property name="LAST_UPDATE_TIME" type="java.util.Date">
+            <column name="LAST_UPDATE_TIME"></column>
+        </property>
+        <property name="S_MAPFLAG" type="java.lang.String">
+            <column name="S_MAPFLAG"></column>
+        </property>
+        <property name="S_TARGET1" type="java.lang.String">
+            <column name="S_TARGET1"></column>
+        </property>
+        <property name="S_TARGET2" type="java.lang.String">
+            <column name="S_TARGET2"></column>
+        </property>
+        <property name="S_SOURCE" type="java.lang.String">
+            <column name="S_SOURCE"></column>
+        </property>
+        <property name="S_TYPE" type="java.lang.String">
+            <column name="S_TYPE"></column>
+        </property>
+        <property name="S_DESC" type="java.lang.String">
+            <column name="S_DESC"></column>
+        </property>
+        <property name="IS_DELETE" type="int">
+            <column name="IS_DELETE"></column>
+        </property>
+
+    </class>
+</hibernate-mapping>
