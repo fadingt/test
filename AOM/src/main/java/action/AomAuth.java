@@ -89,6 +89,7 @@ public class AomAuth {
                 toAddress[cnt] = new InternetAddress(user.getMailbox());
             } catch (AddressException e) {
                 // TODO: 12/3/2020
+                System.out.println("fail");
                 return "{result:fail}";
             }
             cnt++;

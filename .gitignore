@@ -1,7 +1,6 @@
 *.jar
 *.rar
 *.war
-*.iml
 *.class
 *.log
 *.log.*

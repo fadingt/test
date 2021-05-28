@@ -3,6 +3,7 @@ package domain.ngoss;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
@@ -71,6 +72,7 @@ public class TSnapContractsyncEntity {
     private String sAccdate;
     private String sStage;
     private Date sBackdate;
+    private Timestamp dtSnaptime;
 
     @Id
     @Column(name = "ID")
@@ -652,6 +654,15 @@ public class TSnapContractsyncEntity {
         this.sBackdate = sBackdate;
     }
 
+    @Basic
+    @Column(name = "dt_snaptime")
+    public Timestamp getdtSnaptime() {
+        return dtSnaptime;
+    }
+
+    public void setDtSnaptime(Timestamp dtSnaptime) {
+        this.dtSnaptime = dtSnaptime;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
